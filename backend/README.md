@@ -7,17 +7,16 @@ Install Docker for your local machine from here ==> [Docker](https://www.docker.
 ## Run
 
 ### Build Docker
-```
-docker compose up -d
+```sh
+docker build -t photo-album-gen:latest .
 ```
 
-## Verify Build
+### Run Docker
+```
+docker run -p 5000:5000 --rm photo-album-gen:latest
+```
+
+## Verify
 ### Hello Page
 
 In the browser visit http://localhost:5000/hello
-
-## Terminate Docker
-### Stop Docker
-```
-docker compose down -v --rmi all
-```
