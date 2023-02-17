@@ -1,50 +1,29 @@
 version: "3.9"
 services:
+
   # database:
   #   build: ./backend
   #   # container_name: photo-album-gen-database
   #   command: [ "--app", "flaskr", "init-db" ]
+
   backend:
     build: backend/.
-    # container_name: photo-album-gen-backend
     volumes:
       - ./backend:/app
     environment:
       FLASK_DEBUG: "true"
-      TEST: "test_variable"
-      # ports:
-      #   - "5000-5003:5000"
     networks:
       - backend_nw
-      # depends_on:
-      #   - database
-      #   - redis
-      # deploy:
-      #   replicas: 2
-      #   # endpoint_mode: vip
-      #   placement:
-      #     max_replicas_per_node: 1
-      # update_config:
-      #   parallelism: 2
-      # restart_policy:
-      #   condition: on-failure
-      # deploy:
-      #   mode: replicated
-      #   replicas: 6
-      #   endpoint_mode: vip
-      # ports:
-      #   - "3001:3001"
-      #   - "3002:3002"
-      #   - "3003:3003"
-      #   - "3004:3004"
+    depends_on:
+      # - database
+      - cache
 
-  redis:
+  cache:
     image: "redis:alpine"
-    # container_name: photo-album-gen-cache
     networks:
       - backend_nw
 
-  nginx:
+  loadbalancer:
     image: nginx:latest
     volumes:
       - ./loadbalancer/nginx.conf:/etc/nginx/nginx.conf:ro
