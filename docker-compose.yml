@@ -5,17 +5,17 @@ services:
   #   # container_name: photo-album-gen-database
   #   command: [ "--app", "flaskr", "init-db" ]
   backend:
-    build: ./backend
+    build: backend/.
     # container_name: photo-album-gen-backend
     volumes:
       - ./backend:/app
     environment:
       FLASK_DEBUG: "true"
       TEST: "test_variable"
-    ports:
-      - "5000:5000"
+      # ports:
+      #   - "5000-5003:5000"
     networks:
-      - backend
+      - backend_nw
       # depends_on:
       #   - database
       #   - redis
@@ -42,8 +42,19 @@ services:
     image: "redis:alpine"
     # container_name: photo-album-gen-cache
     networks:
+      - backend_nw
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./loadbalancer/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
       - backend
+    ports:
+      - "5000:4000"
+    networks:
+      - backend_nw
 
 networks:
-  frontend:
-  backend:
+  frontend_nw:
+  backend_nw:
