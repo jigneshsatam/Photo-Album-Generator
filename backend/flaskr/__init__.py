@@ -16,7 +16,7 @@ def create_app(test_config=None):
       DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
   )
 
-  cache = redis.Redis(host='redis', port=6379)
+  cache = redis.Redis(host='cache', port=6379)
 
   if test_config is None:
     # load the instance config, if it exists, when not testing

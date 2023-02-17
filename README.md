@@ -8,7 +8,7 @@ Install Docker for your local machine from here ==> [Docker](https://www.docker.
 
 ### Build Docker
 ```
-docker compose up -d
+docker compose up --scale backend=3 -d
 ```
 
 ## Verify Build
