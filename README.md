@@ -19,5 +19,15 @@ In the browser visit http://localhost:5000/hello
 ## Terminate Docker
 ### Stop Docker
 ```
+docker compose down
+```
+
+### Stop Docker and Remove Volumnes
+```
+docker compose down -v
+```
+
+### Stop Docker and Remove all the images
+```
 docker compose down -v --rmi all
 ```
