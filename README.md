@@ -22,7 +22,7 @@ In the browser visit http://localhost:5000/hello
 docker compose down
 ```
 
-### Stop Docker and Remove Volumnes
+### Stop Docker and Remove Volumes
 ```
 docker compose down -v
 ```
