@@ -18,6 +18,15 @@ services:
       # - database
       - cache
 
+  frontend:
+    build: frontend/aespa/
+    volumes:
+      - ./frontend/aespa/:/app
+    ports:
+      - "4200:80"
+    networks:
+      - frontend_nw
+
   cache:
     image: "redis:alpine"
     networks:
