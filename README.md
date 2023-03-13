@@ -21,13 +21,13 @@ Install Docker for your local machine from here ==> [Docker](https://www.docker.
 
 ### Build Docker
 ```
-docker compose up --scale backend=3 -d
+docker compose up -d --scale backend=3
 ```
 
 ## Verify Build
 
 ### Hello Page
-In the browser visit http://localhost:5000/hello
+In the browser visit http://localhost:8827
 
 ## Terminate Docker
 

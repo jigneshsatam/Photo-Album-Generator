@@ -9,10 +9,10 @@ services:
 
   backend:
     image: jigneshsatam/backend:latest
-    build: backend/.
+    # build: backend/.
     volumes:
-      - ./shared/:/app/uploads
-      - ./backend:/app
+      - ./shared/:/app/uploads/
+      # - ./backend:/app
     environment:
       FLASK_DEBUG: "true"
     networks:
@@ -23,10 +23,10 @@ services:
 
   frontend:
     image: jigneshsatam/frontend:latest
-    build: frontend/aespa/
+    # build: frontend/aespa/
     volumes:
       - ./shared:/usr/share/nginx/html/assets/uploads/
-      - ./frontend/aespa/:/app
+      # - ./frontend/aespa/:/app
     ports:
       - "4200:80"
     networks:
@@ -39,7 +39,7 @@ services:
 
   loadbalancer:
     image: jigneshsatam/loadbalancer:latest
-    build: loadbalancer/.
+    # build: loadbalancer/.
     # volumes:
     # - ./loadbalancer/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
