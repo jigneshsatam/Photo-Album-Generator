@@ -43,12 +43,19 @@ def create_app(test_config=None):
         time.sleep(0.5)
 
   # a simple page that says hello
-  @app.route('/hello')
+  @app.route('/')
   def hello():
     # return 'Hello, World!'
     count = get_hit_count()
     # count = 0
-    return 'Hello World! I have been seen {} times.\n'.format(count)
+
+    f = open("uploads/test.txt", "r")
+    fileOp = f.read()
+    print(f"Shared file output  ====>   {fileOp}")
+
+    op = 'Hello World! I have been seen {} times.\n'.format(count)
+    op += f"\n {fileOp}\n"
+    return op
 
   db.init_app(app)
 
