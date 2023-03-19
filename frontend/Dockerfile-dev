@@ -5,10 +5,10 @@ FROM node:14-alpine AS build
 WORKDIR /app
 
 # copy the package.json file to the working directory
-COPY package.json .
+COPY aespa/package.json .
 
 # install dependencies
 RUN npm install
 
 # copy the rest of the files to the working directory
-COPY . .
+COPY aespa/. .

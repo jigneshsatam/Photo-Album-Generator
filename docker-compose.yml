@@ -23,7 +23,7 @@ services:
 
   frontend:
     image: jigneshsatam/frontend:latest
-    build: frontend/aespa/
+    build: frontend
     volumes:
       - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
       - ./Photo-Generator-Pictures:/app/src/assets/uploads/
@@ -35,7 +35,7 @@ services:
   frontend-dev:
     image: jigneshsatam/frontend-dev:latest
     build:
-      context: ./frontend/aespa
+      context: frontend
       dockerfile: Dockerfile-dev
     volumes:
       - ./frontend/aespa:/app

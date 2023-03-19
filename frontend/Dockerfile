@@ -5,19 +5,22 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # copy the package.json file to the working directory
-COPY package.json .
+COPY aespa/package.json .
 
 # install dependencies
 RUN npm install
 
 # copy the rest of the files to the working directory
-COPY . .
+COPY aespa/. .
 
 # build the app
 RUN npm run build --prod
 
 # Use nginx as a web server
 FROM nginx:1.21-alpine
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy the Angular build artifacts to the web server directory
 COPY --from=build /app/dist/aespa /usr/share/nginx/html
