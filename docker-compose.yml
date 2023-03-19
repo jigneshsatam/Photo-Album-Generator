@@ -11,12 +11,12 @@ services:
     image: jigneshsatam/backend:latest
     build: backend/.
     volumes:
-      - ./shared/:/app/uploads
+      - ./Photo-Generator-Pictures:/app/uploads
       - ./backend:/app
     environment:
       FLASK_DEBUG: "true"
     networks:
-      - backend_nw
+      - photo_album_generator_nw
     depends_on:
       # - database
       - cache
@@ -25,37 +25,47 @@ services:
     image: jigneshsatam/frontend:latest
     build: frontend/aespa/
     volumes:
-      - ./shared:/usr/share/nginx/html/assets/uploads/
-      - ./frontend/aespa/:/app
+      - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
+      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
     ports:
       - "4200:80"
     networks:
-      - frontend_nw
+      - photo_album_generator_nw
+
+  frontend-dev:
+    image: jigneshsatam/frontend-dev:latest
+    build:
+      context: ./frontend/aespa
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./frontend/aespa:/app
+      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+    ports:
+      - "4300:4200"
+    networks:
+      - photo_album_generator_nw
+    command: npm start
 
   cache:
     image: "redis:alpine"
     networks:
-      - backend_nw
+      - photo_album_generator_nw
 
   loadbalancer:
     image: jigneshsatam/loadbalancer:latest
     build: loadbalancer/.
-    # volumes:
-    # - ./loadbalancer/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - backend
     ports:
       - "8827:4000"
     networks:
-      - backend_nw
-  # test-script:
-  #   build: test-script/ubuntu/.
-  #   container_name: test-script
-  #   volumes:
-  #     - ./:/app
-
-
+      - photo_album_generator_nw
 
 networks:
-  frontend_nw:
-  backend_nw:
+  photo_album_generator_nw:
+
+    # test-script:
+    #   build: test-script/ubuntu/.
+    #   container_name: test-script
+    #   volumes:
+    #     - ./:/app
