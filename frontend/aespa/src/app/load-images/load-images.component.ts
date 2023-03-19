@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LoadImagesComponent {
 
-  apiUrl = 'http://localhost:8827/';
+  apiUrl = 'http://localhost:8827/images/load';
   imageUrls: string[] = [];
 
   constructor(private http: HttpClient) { }
