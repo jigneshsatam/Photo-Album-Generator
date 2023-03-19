@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	_ "embed"
 	"fmt"
 	"os"
@@ -17,8 +18,8 @@ var script string
 //go:embed linux-docker.sh
 var linuxDocker string
 
-// //go:embed linux-docker-part-2.sh
-// var linuxDockerPart2 string
+//go:embed mac-docker.sh
+var macDockerPart string
 
 //go:embed docker-compose-dev.yml
 var dockerCompse string
@@ -36,6 +37,7 @@ func main() {
 		// runBashCommand(linuxDocker)
 	case "darwin":
 		fmt.Println("Hello from Darwin(Mac) -", runtime.GOARCH)
+		runBashCommand(macDockerPart)
 	}
 
 	startDocker()
@@ -51,6 +53,9 @@ func startDocker() {
 	fmt.Println("Starting Application...")
 
 	runBashCommand("touch docker-compose.yml")
+
+	runBashCommand("mkdir -p Photo-Generator-Pictures")
+
 	compose := "echo '" + dockerCompse + "' > docker-compose.yml"
 	// print(compose)
 	runBashCommand(compose)
@@ -58,7 +63,7 @@ func startDocker() {
 	// runBashCommand("echo " + dockerCompse + " > docker-compose.yml")
 	runBashCommand("docker compose up -d --scale backend=3")
 
-	runBashCommand("open http://localhost:8827")
+	runBashCommand("open http://localhost:4200")
 }
 
 func shutdownDocker() {
@@ -68,12 +73,44 @@ func shutdownDocker() {
 }
 
 func runBashCommand(command string) {
-	c := exec.Command("bash")
-	c.Stdin = strings.NewReader(command)
+	cmd := exec.Command("bash")
+	cmd.Stdin = strings.NewReader(command)
 
-	b, e := c.Output()
-	if e != nil {
-		fmt.Println(e)
+	// stdout, err := c.StdoutPipe()
+	// c.Stderr = c.Stdout
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// if err = c.Start(); err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// for {
+	// 	t := make([]byte, 1024)
+	// 	_, err := stdout.Read(t)
+	// 	fmt.Print(string(t))
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	time.Sleep(1 * time.Second)
+	// }
+
+	// ======== working start ========
+	stdout, _ := cmd.StdoutPipe()
+	cmd.Start()
+	scanner := bufio.NewScanner(stdout)
+	// scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		m := scanner.Text()
+		fmt.Println(m)
 	}
-	fmt.Println(string(b))
+	cmd.Wait()
+	// ======== working end ========
+
+	// b, e := cmd.Output()
+	// if e != nil {
+	// 	fmt.Println(e)
+	// }
+	// fmt.Println(string(b))
 }
