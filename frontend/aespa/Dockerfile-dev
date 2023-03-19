@@ -1,0 +1,14 @@
+# use the official node docker file
+FROM node:14-alpine AS build
+
+# set the working directory
+WORKDIR /app
+
+# copy the package.json file to the working directory
+COPY package.json .
+
+# install dependencies
+RUN npm install
+
+# copy the rest of the files to the working directory
+COPY . .

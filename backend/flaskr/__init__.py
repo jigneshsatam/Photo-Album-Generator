@@ -5,12 +5,14 @@ import redis
 
 from . import db
 
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__, instance_relative_config=True)
+  CORS(app)
   app.config.from_mapping(
       SECRET_KEY='dev',
       DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
@@ -49,13 +51,19 @@ def create_app(test_config=None):
     count = get_hit_count()
     # count = 0
 
-    f = open("uploads/test.txt", "r")
-    fileOp = f.read()
-    print(f"Shared file output  ====>   {fileOp}")
-
     op = 'Hello World! I have been seen {} times.\n'.format(count)
-    op += f"\n {fileOp}\n"
-    return op
+
+    image_list = []
+    # get images
+    for img in os.scandir("uploads/images"):
+      if img.name.endswith(".png") or img.name.endswith(".jpg"):
+        image_list.append(img.path)
+
+    response = jsonify(
+        message=op,
+        images=image_list
+    )
+    return response
 
   db.init_app(app)
 
