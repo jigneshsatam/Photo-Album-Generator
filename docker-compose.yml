@@ -1,11 +1,26 @@
 name: photo-album-generator
 version: "3.9"
 services:
-
-  # database:
-  #   build: ./backend
-  #   # container_name: photo-album-gen-database
-  #   command: [ "--app", "flaskr", "init-db" ]
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      DATABASE_HOST: 127.0.0.1
+      POSTGRES_USER: photogendocker
+      POSTGRES_PASSWORD: photogendocker
+      POSTGRES_DB: root
+  
+  pgadmin-compose:
+        image: dpage/pgadmin4
+        environment: 
+            PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+            PGADMIN_DEFAULT_PASSWORD: "test123!"
+        ports: 
+            - "16543:80"
+        depends_on: 
+            - database   
 
   backend:
     image: jigneshsatam/backend:latest
@@ -18,7 +33,7 @@ services:
     networks:
       - photo_album_generator_nw
     depends_on:
-      # - database
+      - database
       - cache
 
   frontend:
