@@ -1,24 +1,22 @@
-import os
+import json
+
 from flask import Blueprint, Response, jsonify
 
+from .image_model import Image
 
 images_routes = Blueprint("images_routes", __name__, url_prefix="/images")
 
 
 @images_routes.route("/load")
-def load():
-  image_list = []
+def load() -> str:
 
-  # get images
-  for img in os.scandir("uploads/images"):
-    if img.name.endswith(".png") or img.name.endswith(".jpg") or img.name.endswith(".jpeg"):
-      image_list.append(img.path)
+  images = Image.get_images("uploads/images")
 
-  response = jsonify(
-      images=image_list
-  )
+  response = {
+      "images": [img.__dict__ for img in images]
+  }
 
-  return response
+  return json.dumps(response)
 
 
 @images_routes.route("/purchases")
