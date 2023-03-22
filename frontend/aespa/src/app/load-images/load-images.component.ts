@@ -9,7 +9,7 @@ import { Image } from "./image";
 })
 export class LoadImagesComponent {
 
-  apiUrl = 'http://localhost:8827/images/load';
+  apiUrl = 'http://localhost:8827/images/load?directory=uploads/images';
   images: Image[] = [];
 
   constructor(private http: HttpClient) { }
