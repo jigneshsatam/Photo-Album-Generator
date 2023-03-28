@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Image } from "./image";
 
 @Component({
   selector: 'app-load-images',
@@ -8,31 +9,26 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LoadImagesComponent {
 
-  apiUrl = 'http://localhost:8827/';
-  imageUrls: string[] = [];
+  apiUrl = 'http://localhost:8827/images/load?directory=uploads/images';
+  images: Image[] = [];
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.getUrls();
+    this.getImages();
   }
 
-  getUrls() {
-    this.http.get<any[]>(this.apiUrl)
+  getImages() {
+    this.http.get<any>(this.apiUrl)
       .subscribe((data: any) => {
-        console.log("getUrls: ", data)
-
-        console.log("images ngInit: ", this.imageUrls)
-
-        console.log("images ngInit typeof: ", typeof data)
-        data["images"].forEach((element: string) => {
-          this.imageUrls.push("assets/" + element);
+        data["images"].forEach((element: Image) => {
+          element["path"] = "assets/" + element.path;
+          this.images.push(element);
         });
 
-        console.log("images ngInit: ", this.imageUrls)
       },
         error => {
-          console.log("getUrls error: ", error);
+          console.log("getImages error: ", error);
         });
   }
 }

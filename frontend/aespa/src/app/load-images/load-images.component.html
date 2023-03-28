@@ -2,33 +2,21 @@
   <div class="album py-4 bg-light">
     <div class="container-xl">
       <div class="row gy-4">
-        <div class="col-md-4" *ngFor="let img of imageUrls">
+        <div class="col-md-4" *ngFor="let img of images">
             <div class="card h-100 md-4 box-shadow">
-              <img [src]="img" class="card-img-top h-100" >
+              <img [src]="img.path" class="card-img-top h-100" >
               <div class="card-body d-grid gap-2 d-md-block">
 
-                <button type="button" class="btn btn-primary position-relative rounded-pill btn-block">
-                  Test
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    X
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
-                </button>
-                <button type="button" class="btn btn-primary position-relative rounded-pill">
-                  Tag1
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    X
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
-                </button>
-                <button type="button" class="btn btn-primary position-relative rounded-pill">
-                  Tag2
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    X
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
-                </button>
-                <span class="badge badge-secondary">Tag 1 <a href="#" class="ml-2"><i class="fas fa-times"></i></a></span>
+                <div class="d-flex mb-3 gap-3 flex-wrap justify-content-evenly">
+
+                  <button type="button" class="btn btn-primary position-relative rounded-pill text-wrap text-break btn-block" *ngFor="let tag of img.tags">
+                    {{tag}}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      X
+                      <span class="visually-hidden">unread messages</span>
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
         </div>

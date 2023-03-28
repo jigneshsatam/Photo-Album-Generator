@@ -7,10 +7,13 @@ services:
     ports:
       - 5432:5432
     environment:
-      DATABASE_HOST: 127.0.0.1
       POSTGRES_USER: photogendocker
       POSTGRES_PASSWORD: photogendocker
-      POSTGRES_DB: root
+      POSTGRES_DB: photogen
+    volumes:
+      - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+    networks:
+      - photo_album_generator_nw
   
   pgadmin-compose:
         image: dpage/pgadmin4
@@ -20,10 +23,13 @@ services:
         ports: 
             - "16543:80"
         depends_on: 
-            - database   
+            - database  
+        networks:
+          - photo_album_generator_nw
+         
 
   backend:
-    image: jigneshsatam/backend:latest
+    #image: jigneshsatam/backend:latest
     build: backend/.
     volumes:
       - ./Photo-Generator-Pictures:/app/uploads
@@ -35,10 +41,13 @@ services:
     depends_on:
       - database
       - cache
+    restart: always
+    links:
+      - database:database
 
   frontend:
     image: jigneshsatam/frontend:latest
-    build: frontend/aespa/
+    build: frontend
     volumes:
       - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
       - ./Photo-Generator-Pictures:/app/src/assets/uploads/
@@ -50,7 +59,7 @@ services:
   frontend-dev:
     image: jigneshsatam/frontend-dev:latest
     build:
-      context: ./frontend/aespa
+      context: frontend
       dockerfile: Dockerfile-dev
     volumes:
       - ./frontend/aespa:/app
