@@ -11,12 +11,12 @@ import { UploadComponent } from './upload/upload.component';
 const routes: Routes = [
   { path: '', component: LoadImagesComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'admin', component: AdminLandingComponent},
-  { path: 'admin/upload', component: UploadComponent},
+  { path: 'admin', component: AdminLandingComponent },
+  { path: 'admin/upload', component: UploadComponent },
   { path: 'admin/load-images', component: LoadImagesComponent },
-  { path: 'guest', component: GuestLandingComponent},
-  { path: 'guest/view', component: ViewImagesComponent},
-  { path: 'guest/slideshow', component: SlideshowComponent},
+  { path: 'guest', component: GuestLandingComponent },
+  { path: 'guest/view', component: ViewImagesComponent },
+  { path: 'guest/slideshow', component: SlideshowComponent },
 ];
 
 @NgModule({

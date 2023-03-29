@@ -2,4 +2,4 @@ flask==2.2.3
 redis
 flask_cors
 Flask-SQLAlchemy==2.5.1
-psycopg2-binary==2.9.4
+psycopg2-binary
