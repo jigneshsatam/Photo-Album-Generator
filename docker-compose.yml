@@ -14,22 +14,21 @@ services:
       - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
     networks:
       - photo_album_generator_nw
-  
+
   pgadmin-compose:
-        image: dpage/pgadmin4
-        environment: 
-            PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
-            PGADMIN_DEFAULT_PASSWORD: "test123!"
-        ports: 
-            - "16543:80"
-        depends_on: 
-            - database  
-        networks:
-          - photo_album_generator_nw
-         
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "test123!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - database
+    networks:
+      - photo_album_generator_nw
 
   backend:
-    #image: jigneshsatam/backend:latest
+    # image: jigneshsatam/backend:latest
     build: backend/.
     volumes:
       - ./Photo-Generator-Pictures:/app/uploads
@@ -46,7 +45,7 @@ services:
       - database:database
 
   frontend:
-    image: jigneshsatam/frontend:latest
+    # image: jigneshsatam/frontend:latest
     build: frontend
     volumes:
       - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
@@ -57,7 +56,7 @@ services:
       - photo_album_generator_nw
 
   frontend-dev:
-    image: jigneshsatam/frontend-dev:latest
+    # image: jigneshsatam/frontend-dev:latest
     build:
       context: frontend
       dockerfile: Dockerfile-dev

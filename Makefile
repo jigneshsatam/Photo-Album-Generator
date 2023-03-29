@@ -6,10 +6,11 @@ build: clean \
 	linux-64-build linux-32-build \
 	windows-64-build windows-32-build
 
-# build: clean \
-# 	linux-64-build linux-32-build \
-# 	windows-64-build windows-32-build \
-# 	macos-build-m1 macos-build-intel
+.PHONY: build-prod
+build-prod: clean \
+	linux-64-build linux-32-build \
+	windows-64-build windows-32-build \
+	macos-build-m1 macos-build-intel
 
 .PHONY: linux-64-build
 linux-64-build:
@@ -40,6 +41,7 @@ macos-build-m1:
 
 	GOOS=darwin GOARCH=arm64 go build -o packaging/Photo-Album-Generator-macos-arm64 packaging/main.go
 	mv packaging/Photo-Album-Generator-macos-arm64 packaging/build/
+	rm test_folder/Photo-Album-Generator-macos-arm64
 	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
 
 
