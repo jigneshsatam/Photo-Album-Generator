@@ -21,6 +21,9 @@ var linuxDocker string
 //go:embed mac-docker.sh
 var macDockerPart string
 
+//go:embed windows-docker.sh
+var windowsDocker string
+
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
@@ -30,6 +33,7 @@ func main() {
 	switch runtime.GOOS {
 	case "windows":
 		fmt.Println("Hello from Windows -", runtime.GOARCH)
+		runBashCommand(windowsDocker)
 	case "linux":
 		fmt.Println("Hello from Linux -", runtime.GOARCH)
 		fmt.Println("Installing docker if not present...")
