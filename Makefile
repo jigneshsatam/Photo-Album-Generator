@@ -24,12 +24,12 @@ linux-32-build:
 
 .PHONY: windows-64-build
 windows-64-build:
-	GOOS=windows GOARCH=amd64 go build -o packaging/Photo-Album-Generator-64.exe packaging/main.go
+	GOOS=windows GOARCH=amd64 go build -o packaging/Photo-Album-Generator-win-64.exe packaging/main.go
 	mv packaging/Photo-Album-Generator-64.exe packaging/build/
 
 .PHONY: windows-32-build
 windows-32-build:
-	GOOS=windows GOARCH=386 go build -o packaging/Photo-Album-Generator-32.exe packaging/main.go
+	GOOS=windows GOARCH=386 go build -o packaging/Photo-Album-Generator-win-32.exe packaging/main.go
 	mv packaging/Photo-Album-Generator-32.exe packaging/build/
 
 .PHONY: macos-build-m1
@@ -41,8 +41,8 @@ macos-build-m1:
 
 	GOOS=darwin GOARCH=arm64 go build -o packaging/Photo-Album-Generator-macos-arm64 packaging/main.go
 	mv packaging/Photo-Album-Generator-macos-arm64 packaging/build/
-	rm test_folder/Photo-Album-Generator-macos-arm64
-	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
+#	rm test_folder/Photo-Album-Generator-macos-arm64
+#	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
 
 
 .PHONY: macos-build-intel
