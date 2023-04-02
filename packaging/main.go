@@ -19,28 +19,51 @@ var script string
 var linuxDocker string
 
 //go:embed mac-docker.sh
-var macDockerPart string
+var macDocker string
 
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
 func main() {
-	defer shutdownDocker()
 
 	switch runtime.GOOS {
 	case "windows":
+		defer shutdownDockerWindows()
 		fmt.Println("Hello from Windows -", runtime.GOARCH)
+		startDockerWindows()
 	case "linux":
+		defer shutdownDocker()
 		fmt.Println("Hello from Linux -", runtime.GOARCH)
 		fmt.Println("Installing docker if not present...")
 		runBashCommand(linuxDocker)
+		startDocker()
 		// runBashCommand(linuxDocker)
 	case "darwin":
+		defer shutdownDocker()
 		fmt.Println("Hello from Darwin(Mac) -", runtime.GOARCH)
-		runBashCommand(macDockerPart)
-	}
+		type output struct {
+			out []byte
+			err error
+		}
 
-	startDocker()
+		// ch := make(chan output)
+		// go func() {
+		// 	// cmd := exec.Command("sleep", "1")
+		// 	// cmd := exec.Command("sleep", "5")
+		// 	cmd := exec.Command(".", "/usr/bin/open -a Docker")
+		// 	out, err := cmd.CombinedOutput()
+		// 	ch <- output{out, err}
+		// }()
+
+		// x := <-ch
+		// fmt.Printf("program done; out: %q\n", string(x.out))
+		// if x.err != nil {
+		// 	fmt.Printf("program errored: %s\n", x.err)
+		// }
+
+		runBashCommand(macDocker)
+		startDocker()
+	}
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
@@ -66,11 +89,61 @@ func startDocker() {
 	runBashCommand("open http://localhost:4200")
 }
 
+func startDockerWindows() {
+	fmt.Println("Starting Application on Windows...")
+	createDockerComposeYAML()
+	runBashCommandWindows("docker compose up -d --scale backend=3")
+	runBashCommandWindows("start http://localhost:4200")
+}
+
 func shutdownDocker() {
 	stop := "docker compose down -v"
 	runBashCommand(stop)
 	runBashCommand("rm docker-compose.yml")
 }
+
+func shutdownDockerWindows() {
+	stop := "docker compose down -v"
+	runBashCommandWindows(stop)
+	runBashCommandWindows("rm docker-compose.yml")
+}
+
+func createDockerComposeYAML() {
+	err := os.WriteFile("docker-compose.yml", []byte(dockerCompse), 0644)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+}
+
+// func runBashCommandWindows() {
+// 	// dockerCompse1 := "name: photo-album-generator\nversion: 3.9"
+// 	// testFile, err := os.Create("docker-compose.yml")
+// 	// if err != nil {
+// 	// 	fmt.Println("Error: ", err)
+// 	// }
+
+// 	// d1 := []byte("hello\ngo\n")
+// 	err := os.WriteFile("docker-compose.yml", []byte(dockerCompse), 0644)
+// 	if err != nil {
+// 		fmt.Println("Error: ", err)
+// 	}
+
+// 	// cmd := exec.Command("cmd", "/K", "echo "+dockerCompse1)
+
+// 	// cmd.Stdout = testFile
+
+// 	// // out, err := cmd.Output()
+
+// 	// err = cmd.Start()
+// 	// if err != nil {
+// 	// 	fmt.Println("Error: ", err)
+// 	// }
+
+// 	// cmd.Wait()
+
+// 	// fmt.Println("output: ", string(out))
+
+// }
 
 func runBashCommand(command string) {
 	cmd := exec.Command("bash")
@@ -113,4 +186,25 @@ func runBashCommand(command string) {
 	// 	fmt.Println(e)
 	// }
 	// fmt.Println(string(b))
+}
+
+func runBashCommandWindows(comm string) {
+	cmd := exec.Command("cmd", "/K", comm)
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+	fmt.Println("output: ", string(out))
+
+	// cmd := exec.Command("bash")
+	// // cmd.Stdin = strings.NewReader(command)
+	// stdout, _ := cmd.StdoutPipe()
+	// cmd.Start()
+	// scanner := bufio.NewScanner(stdout)
+	// // scanner.Split(bufio.ScanWords)
+	// for scanner.Scan() {
+	// 	m := scanner.Text()
+	// 	fmt.Println(m)
+	// }
+	// cmd.Wait()
 }
