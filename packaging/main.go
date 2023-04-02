@@ -21,6 +21,9 @@ var linuxDocker string
 //go:embed mac-docker.sh
 var macDocker string
 
+//go:embed windows-docker.sh
+var windowsDocker string
+
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
@@ -30,6 +33,7 @@ func main() {
 	case "windows":
 		defer shutdownDockerWindows()
 		fmt.Println("Hello from Windows -", runtime.GOARCH)
+		runBashCommand(windowsDocker)
 		startDockerWindows()
 	case "linux":
 		defer shutdownDocker()
