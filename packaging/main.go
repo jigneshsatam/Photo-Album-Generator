@@ -33,11 +33,8 @@ func main() {
 	case "windows":
 		defer shutdownDockerWindows()
 		fmt.Println("Hello from Windows -", runtime.GOARCH)
-<<<<<<< HEAD
 		runBashCommand(windowsDocker)
-=======
 		startDockerWindows()
->>>>>>> 46d284c777a12bc87cf0fe84772bfa6316e3ca33
 	case "linux":
 		defer shutdownDocker()
 		fmt.Println("Hello from Linux -", runtime.GOARCH)
