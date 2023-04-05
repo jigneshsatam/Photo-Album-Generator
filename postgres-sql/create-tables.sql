@@ -1,9 +1,20 @@
 CREATE TABLE IF NOT EXISTS userinfo
 (
     id serial PRIMARY KEY,
-    username character varying(50) COLLATE pg_catalog."default",
-    pwd character varying(50) COLLATE pg_catalog."default",
-    firstname character varying(50) COLLATE pg_catalog."default",
-    lastname character varying(50) COLLATE pg_catalog."default",
-    usertype character varying(50) COLLATE pg_catalog."default"
+    username character varying(50),
+    pwd character varying(50),
+    firstname character varying(50),
+    lastname character varying(50),
+    usertype character varying(50)
+);
+
+CREATE TABLE IF NOT EXISTS imgdirectories
+(
+    id serial PRIMARY KEY,
+    userid integer,
+    dirpath text,
+
+    CONSTRAINT FK_user FOREIGN KEY(userid)
+        REFERENCES userinfo(id)
+        ON DELETE CASCADE
 );

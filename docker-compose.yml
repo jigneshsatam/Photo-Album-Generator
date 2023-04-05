@@ -11,6 +11,7 @@ services:
       POSTGRES_PASSWORD: photogendocker
       POSTGRES_DB: photogen
     volumes:
+      - ./data:/var/lib/postgresql/data
       - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
     networks:
       - photo_album_generator_nw
@@ -45,7 +46,7 @@ services:
       - database:database
 
   frontend:
-    # image: jigneshsatam/frontend:latest
+    image: jigneshsatam/frontend:latest
     build: frontend
     volumes:
       - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
