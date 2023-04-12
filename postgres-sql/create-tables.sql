@@ -18,3 +18,6 @@ CREATE TABLE IF NOT EXISTS imgdirectories
         REFERENCES userinfo(id)
         ON DELETE CASCADE
 );
+
+INSERT INTO userinfo(username, pwd, firstname, lastname, usertype)
+VALUES('defaultuser', 'password', 'Default', 'User', 'admin');
