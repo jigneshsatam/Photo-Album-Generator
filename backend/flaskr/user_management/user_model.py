@@ -1,26 +1,28 @@
-import os
-import psycopg2
-
-# Connect to database
-cnxn = psycopg2.connect("postgresql://photogendocker:photogendocker@database:5432/photogen")
-
-# Create cursor to perform database operations
-cursor = cnxn.cursor()
+from flaskr.db.postgres_db_connect import Connect
+import logging
 
 class User:
     def create_user(user_name, password, first_name, last_name, user_type):
         result = False
 
         try:
+            conn = Connect().get_connection()
+
+            # Create cursor to perform database operations
+            cursor = conn.cursor()
+
             cursor.execute(
             "insert into UserInfo(userName, pwd, firstName, lastName, userType)"
             " values('" + user_name + "', '" + password + "', '" + first_name + "', '" + last_name +
             "', '" + user_type + "')")
 
-            cnxn.commit()
+            conn.commit()
+
+            conn.close()
 
             result = True
-        except:
+        except Exception as e:
+            logging.error(e)
             result = False        
 
         return result
