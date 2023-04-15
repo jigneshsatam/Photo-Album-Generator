@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: photogendocker
       POSTGRES_PASSWORD: photogendocker
       POSTGRES_DB: photogen
+      Postgres_DB_Connection_String: 'postgresql://photogendocker:photogendocker@database:5432/photogen'
     volumes:
       - ./data:/var/lib/postgresql/data
       - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql

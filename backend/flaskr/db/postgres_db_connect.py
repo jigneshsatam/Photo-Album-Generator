@@ -12,5 +12,5 @@ class Connect:
     def get_connection(self):
         if self.cnxn is not None:
             return self.cnxn
-        self.cnxn = psycopg2.connect(os.getenv('Postgres_DB_Connection_String'))
+        self.cnxn = psycopg2.connect('postgresql://photogendocker:photogendocker@database:5432/photogen')
         return self.cnxn
