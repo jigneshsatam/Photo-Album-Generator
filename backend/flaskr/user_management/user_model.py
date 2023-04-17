@@ -18,7 +18,7 @@ class User:
 
             conn.commit()
 
-            conn.close()
+            cursor.close()
 
             result = True
         except Exception as e:

@@ -1,80 +1,59 @@
 <!-- importing folder icon from bootstrap -->
+
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
-    <!-- adding grey background to entire page -->
-   <style>
-        .p-3.mb-2.bg-light.text-dark,
-        .container.bg-faded {min-height: 100vh;}
-    </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+  <!-- adding grey background to entire page -->
+  <style>
+    .p-3.mb-2.bg-light.text-dark,
+    .container.bg-faded {
+      min-height: 100vh;
+    }
+  </style>
 </head>
-<!-- hard coded tiles for album list list spread -->
+<!-- Tiles for album list list spread -->
 <div class="p-3 mb-2 bg-light text-dark">
-<div class="container bg-faded">
+  <div class="container bg-faded">
     <h1 class="text-center">My Albums</h1>
     <div class="row">
     </div>
-    <div class="row">
-        <div class="col-4 mx-auto">
-          <!-- bootstrap card tile -->
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">al;shdfasfjsvabrsfdsdv;a;suhansdjfn;bsuvensvksenvkbdjsvo;aewkbjs</h6>
-              <div class="d-flex justify-content-center mt-2">
-                <!-- bootstrap buttons -->
-                <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
+    <!-- When atleast 1 album exists in DB -->
+    <div class="row" *ngIf="albums.length != 0">
+      <!-- Loop over the albums -->
+      <div class="col-4" *ngFor="let album of albums">
+        <!-- bootstrap card tile -->
+        <div class="card card-body mb-2 text-center">
+          <i class="bi bi-folder2-open"></i>
+          <h6 class="mb-0">{{album.dirpath}}</h6>
+          <div class="d-flex justify-content-center mt-2">
+            <!-- bootstrap buttons -->
+            <button type="button" class="btn btn-outline-primary me-2">Update Tags</button>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" (click)="onDelete(album)">Delete</button>
           </div>
-        <div class="col-4 mx-auto">
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">Album 2</h6>
-              <div class="d-flex justify-content-center mt-2">
-                <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
         </div>
-        <div class="col-4 mx-auto">
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">Album 3</h6>
-              <div class="d-flex justify-content-center mt-2">
-                <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
-        </div>
-        <div class="col-4 mx-auto">
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">Album 4</h6>
-              <div class="d-flex justify-content-center mt-2">
-                <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
-        </div>
-        <div class="col-4 mx-auto">
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">Album 5</h6>
-              <div class="d-flex justify-content-center mt-2">
-                <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
-        </div>
-        <div class="col-4 mx-auto">
-            <div class="card card-body mb-2 text-center">
-              <i class="bi bi-folder2-open"></i>
-              <h6 class="mb-0">Album 6</h6>
-              <div class="d-flex justify-content-center mt-2">
-              <button type="button" class="btn btn-outline-primary me-2">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
-              </div>
-            </div>
-        </div>
+      </div>
+    </div>
+    <!-- Message when no album exists -->
+    <div class="row" *ngIf="!isLoading && albums.length == 0">
+      <h5 style="text-align: center; margin-top:40px;">You have no albums!</h5>
+    </div>
+  </div>
 </div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete {{selectedAlbum.dirpath}}?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this album?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" (click)="deleteAlbum(selectedAlbum.id)">Yes</button>
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
 </div>
