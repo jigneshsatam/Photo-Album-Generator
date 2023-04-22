@@ -51,7 +51,8 @@ class Image:
       
       conn.commit()
 
-      conn.close()
+      #conn.close()
+      cursor.close()
       
       result = True
     except Exception as e:
@@ -59,3 +60,54 @@ class Image:
       result = False
       
     return dir_id, result
+  
+  def get_albums():
+    result = False
+    albums = []
+
+    try:
+      conn = Connect().get_connection()
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      query = "SELECT * FROM imgdirectories"     
+      
+      cursor.execute(query)
+      
+      for row in cursor.fetchall():
+        albums.append({
+          "id": row[0],
+          "dirpath": row[2]
+        })
+      
+      conn.commit()
+      cursor.close()
+      
+      result = True
+    except Exception as e:
+      logging.error(e)
+      result = False
+      
+    return albums, result
+  
+  def delete_album(id: int):
+    result = False 
+    
+    try: 
+      conn = Connect().get_connection()
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      cursor.execute("DELETE FROM imgdirectories WHERE id = %s", (id,))
+      
+      conn.commit()
+      cursor.close()
+
+      result = True
+    except Exception as e:
+      logging.error(e)
+      result = False
+      
+    return id, result

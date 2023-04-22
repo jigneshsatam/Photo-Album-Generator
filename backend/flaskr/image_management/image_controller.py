@@ -53,3 +53,24 @@ def add_new_directory():
     return jsonify({'status': 'New directory has been added successfully.', 'directoryId': dir_id})
   else:
     return jsonify({'status': 'Fail! New directory has not been added.'}), 500
+  
+@images_routes.route("/albums", methods=['GET'])
+def get_albums() -> str:
+
+    albums, result = Image.get_albums()
+
+    if result:
+        return jsonify({'status': 'success', 'albums': albums})
+    else:
+        return jsonify({'status': 'fail'}), 500
+    
+
+@images_routes.route("/albums/<id>", methods=['DELETE'])
+def delete_album(id) -> str:
+
+    album_id, result = Image.delete_album(id)
+
+    if result:
+        return jsonify({'status': 'success', 'id': album_id})
+    else:
+        return jsonify({'status': 'fail'}), 500
