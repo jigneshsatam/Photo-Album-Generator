@@ -14,7 +14,10 @@ class User:
             cursor.execute(
             "insert into UserInfo(userName, pwd, firstName, lastName, userType)"
             " values('" + user_name + "', '" + password + "', '" + first_name + "', '" + last_name +
-            "', '" + user_type + "')")
+            "', '" + user_type + "') returning id")
+
+            # Get id for new directory path
+            user_id = int(cursor.fetchone()[0])
 
             conn.commit()
 
@@ -25,4 +28,4 @@ class User:
             logging.error(e)
             result = False        
 
-        return result
+        return user_id, result
