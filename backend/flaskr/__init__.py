@@ -45,6 +45,6 @@ def create_app(test_config=None):
   app.register_blueprint(images_routes)
   app.register_blueprint(users_routes)
 
-  db.init_app(app)
+  #db.init_app(app)
 
   return app

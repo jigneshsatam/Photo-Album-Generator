@@ -10,26 +10,27 @@ services:
       POSTGRES_USER: photogendocker
       POSTGRES_PASSWORD: photogendocker
       POSTGRES_DB: photogen
+      Postgres_DB_Connection_String: 'postgresql://photogendocker:photogendocker@database:5432/photogen'
     volumes:
+      - ./data:/var/lib/postgresql/data
       - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
     networks:
       - photo_album_generator_nw
-  
+
   pgadmin-compose:
-        image: dpage/pgadmin4
-        environment: 
-            PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
-            PGADMIN_DEFAULT_PASSWORD: "test123!"
-        ports: 
-            - "16543:80"
-        depends_on: 
-            - database  
-        networks:
-          - photo_album_generator_nw
-         
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "test123!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - database
+    networks:
+      - photo_album_generator_nw
 
   backend:
-    #image: jigneshsatam/backend:latest
+    # image: jigneshsatam/backend:latest
     build: backend/.
     volumes:
       - ./Photo-Generator-Pictures:/app/uploads
@@ -57,7 +58,7 @@ services:
       - photo_album_generator_nw
 
   frontend-dev:
-    image: jigneshsatam/frontend-dev:latest
+    # image: jigneshsatam/frontend-dev:latest
     build:
       context: frontend
       dockerfile: Dockerfile-dev

@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoadImagesComponent } from './load-images/load-images.component';
 import { HeaderComponent } from './header/header.component';
+import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { ViewImagesComponent } from './view-images/view-images.component';
 import { SlideshowComponent } from './slideshow/slideshow.component';
@@ -20,6 +21,7 @@ import { UploadComponent } from './upload/upload.component';
     LoadImagesComponent,
     HeaderComponent,
     LoginComponent,
+    RegisterComponent,
     ViewImagesComponent,
     SlideshowComponent,
     AdminLandingComponent,

@@ -11,8 +11,8 @@ def register_user():
         return jsonify({'status': 'JSON data is missing'}), 404
 
     # Get username from request
-    if str(request.json.get('userId')) != 'None':
-        user_name = str(request.json.get('userId'))
+    if str(request.json.get('userName')) != 'None':
+        user_name = str(request.json.get('userName'))
     else:
         return jsonify({'status': 'username is missing'}), 404
 
@@ -38,10 +38,11 @@ def register_user():
     user_type = str(request.json.get('userType')) if str(request.json.get('userType')) != "None" else "admin"
 
     # Create user in DB
-    result = User.create_user(user_name, password, first_name, last_name, user_type)
+    user_id, result = User.create_user(user_name, password, first_name, last_name, user_type)
 
     if result:
-        return jsonify({'status': 'Account has been registered for ' + last_name + ', ' + first_name})
+        return jsonify({'status': 'Account has been registered for ' + last_name + ', ' + first_name,
+                         'userId': user_id, 'userType': user_type})
     else:
         return jsonify({'status': 'User creation failed for ' + last_name + ', ' + first_name}), 500
 
