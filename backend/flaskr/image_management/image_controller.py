@@ -1,4 +1,6 @@
 import json
+import os
+import errno
 
 from flask import Blueprint, Response, jsonify, request
 
@@ -74,3 +76,45 @@ def delete_album(id) -> str:
         return jsonify({'status': 'success', 'id': album_id})
     else:
         return jsonify({'status': 'fail'}), 500
+    
+@images_routes.route("/GetSubDirAndFiles", methods=['GET'])
+def get_subdirectories_and_files():
+   # Check if data is provided in request
+  if not request.data:
+    return jsonify({'status': 'JSON data is missing'}), 404
+  
+  # Get directory path from request
+  if str(request.json.get('dirPath')) != 'None':
+    dir_path = str(request.json.get('dirPath')).rstrip("/")
+  else:
+    return jsonify({"status": 'directory path is missing'}), 404
+  
+  # Scan given directory
+  try:
+     dir_entry_objects = os.scandir('/app/uploads/' + dir_path)
+  except OSError as error:
+     if error.errno in (errno.EACCES, errno.EPERM):
+        return jsonify({"status": 'permission denied when accessing directory'}), 401
+     elif error.errno == errno.ENOENT:
+        return jsonify({"status": 'directory not found'}), 404
+     else:
+        return jsonify({"status": error}), 500
+
+  # Get contents in given directory
+  sub_dirs = []
+  files = []
+  if dir_path != "":
+           dir_path = dir_path + '/'
+  for dir_entry in dir_entry_objects:
+     if dir_entry.is_dir():         
+        sub_dirs.append(dir_path + dir_entry.name)
+
+     if dir_entry.is_file():
+        files.append(dir_path + dir_entry.name)
+
+  dir_entry_objects.close()
+
+  if sub_dirs.count == 0 and files.count == 0:
+     return jsonify({'status': 'No subdirectories or files found in given directory.'})
+  else:
+     return jsonify({'Directories': sub_dirs, 'Files': files})
