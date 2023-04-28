@@ -1,0 +1,6 @@
+flask==2.2.3
+redis
+flask_cors
+psycopg2-binary
+Flask-Mail
+psycopg2

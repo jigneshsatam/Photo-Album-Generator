@@ -1,0 +1,98 @@
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: #fff;
+  font-size: 16px;
+}
+
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0062cc;
+}
+
+.alert {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-header h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.form-subheader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-subheader p {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-footer p {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.form-footer a {
+  font-weight: bold;
+}

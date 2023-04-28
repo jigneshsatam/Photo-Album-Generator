@@ -1,0 +1,104 @@
+<main role="main">
+  <div class="album py-4 bg-light">
+    <div class="container-xl">
+ <!-- Beginning OF TAGs Dropdown -->
+      <div class="row mb-3">
+        <form [formGroup]="heroForm">
+          <div class="form-group">
+            <ng-select
+              [items]="tags"
+              [clearSearchOnAdd]="true"
+              [closeOnSelect]="false"
+              labelForId="state"
+              [multiple]="true"
+              placeholder="Select Tags"
+              clearAllText="Clear"
+              formControlName="selectedTagIds"
+              [bindLabel]="'text'"
+              addTagText="Add Tag"
+              placeholder="Search Tags"
+              class="customTagCss"
+            >
+              <ng-template ng-header-tmp>
+                <div
+                  (click)="selectAll()"
+                  *ngIf="
+                    !heroForm.controls.selectedTagIds.value ||
+                    heroForm.controls.selectedTagIds.value.length !== tags.length
+                  "
+                  class="form-check"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="select"
+                    name="select"
+                  />
+                  <label class="form-check-label">Select All</label>
+                </div>
+        
+                <div
+                  (click)="unselectAll()"
+                  *ngIf="
+                    heroForm.controls.selectedTagIds.value &&
+                    heroForm.controls.selectedTagIds.value.length === tags.length
+                  "
+                  class="form-check"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="unselect"
+                    name="unselect"
+                    checked
+                  />
+                  <label class="form-check-label">Unselect All</label>
+                </div>
+              </ng-template>
+              <ng-template
+                ng-option-tmp
+                let-item="item"
+                let-item$="item$"
+                let-index="index"
+              >
+                <div>
+                  <input
+                    id="item-{{ index }}"
+                    type="checkbox"
+                    [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                  <span class="m-2">{{ item['text'] }}</span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </form>
+      </div>
+ <!-- End OF TAGs Dropdown -->
+
+      <div class="row gy-4">
+        <div class="col-md-4" *ngFor="let img of images">
+          <div class="card h-100 md-4 box-shadow">
+            <img [src]="img.path" class="card-img-top h-100">
+            <div class="card-body d-grid gap-2 d-md-block">
+
+              <div class="d-flex mb-3 gap-3 flex-wrap justify-content-evenly">
+
+                <button type="button"
+                  class="btn btn-primary position-relative rounded-pill text-wrap text-break btn-block"
+                  *ngFor="let tag of img.tags">
+                  {{tag}}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    X
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
