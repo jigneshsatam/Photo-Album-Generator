@@ -1,0 +1,40 @@
+<head>
+    <style>
+        .p-3.mb-2.bg-light.text-dark,
+        .container.bg-faded {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<div class="p-3 mb-2 bg-light text-dark">
+    <div class="container bg-faded">
+        <h1 class="text-center">Sign Up</h1>
+        <div class="col-md-6 offset-md-3 mt-5">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" formControlName="fName" class="form-control form-control-lg" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" formControlName="lName" class="form-control form-control-lg" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" formControlName="userName" class="form-control form-control-lg" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" formControlName="pwd" class="form-control form-control-lg" />
+                </div>
+                <div>
+                    <button class="btn btn-primary">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
