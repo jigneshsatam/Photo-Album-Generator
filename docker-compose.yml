@@ -56,19 +56,19 @@ services:
     networks:
       - photo_album_generator_nw
 
-  # frontend-dev:
-  #   # image: jigneshsatam/frontend-dev:latest
-  #   build:
-  #     context: frontend
-  #     dockerfile: Dockerfile-dev
-  #   volumes:
-  #     - ./frontend/aespa:/app
-  #     - ./Photo-Generator-Pictures:/app/src/assets/uploads/
-  #   ports:
-  #     - "4300:4200"
-  #   networks:
-  #     - photo_album_generator_nw
-  #   command: npm start
+  frontend-dev:
+    # image: jigneshsatam/frontend-dev:latest
+    build:
+      context: frontend
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./frontend/aespa:/app
+      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+    ports:
+      - "4300:4200"
+    networks:
+      - photo_album_generator_nw
+    command: npm start
 
   cache:
     image: "redis:alpine"
