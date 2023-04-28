@@ -3,9 +3,7 @@
     <div class="container-xl">
  <!-- Beginning OF TAGs Dropdown -->
       <div class="row mb-3">
-        <div class="d-flex">
-        <div class="p-2 flex-grow-1">
-        <form class="selectForm" [formGroup]="heroForm">
+        <form [formGroup]="heroForm">
           <div class="form-group">
             <ng-select
               [items]="tags"
@@ -18,8 +16,7 @@
               formControlName="selectedTagIds"
               [bindLabel]="'text'"
               addTagText="Add Tag"
-              [addTag]="addCustomTag"
-              placeholder="Type to Add or Search Tags"
+              placeholder="Search Tags"
               class="customTagCss"
             >
               <ng-template ng-header-tmp>
@@ -77,14 +74,6 @@
             </ng-select>
           </div>
         </form>
-      </div>
-      <div class="p-2">
-      <button type="button" class="btn btn-success">Tag All Images</button>
-      </div>
-      <div class="p-2">
-       <button type="button" class="btn btn-primary">Done</button>
-      </div> 
-      </div>      
       </div>
  <!-- End OF TAGs Dropdown -->
 

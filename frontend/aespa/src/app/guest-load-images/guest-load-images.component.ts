@@ -5,11 +5,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-load-images',
-  templateUrl: './load-images.component.html',
-  styleUrls: ['./load-images.component.css'],
+  templateUrl: './guest-load-images.component.html',
+  styleUrls: ['./guest-load-images.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class LoadImagesComponent {
+export class GuestLoadImagesComponent {
   heroForm: any;
   tags: any[] = [
   ];

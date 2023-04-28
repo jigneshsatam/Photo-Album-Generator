@@ -22,13 +22,17 @@
       <div class="col-4" *ngFor="let album of albums">
         <!-- bootstrap card tile -->
         <div class="card card-body mb-2 text-center">
+          <div class="dropdown">
+            <a class="btn kebab-container" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical kebab"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item">Update Tags</a></li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal" (click)="onDelete(album)">Delete</a></li>
+            </ul>
+          </div>
           <i class="bi bi-folder2-open"></i>
           <h6 class="mb-0">{{album.dirpath}}</h6>
-          <div class="d-flex justify-content-center mt-2">
-            <!-- bootstrap buttons -->
-            <button type="button" class="btn btn-outline-primary me-2">Update Tags</button>
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" (click)="onDelete(album)">Delete</button>
-          </div>
         </div>
       </div>
     </div>
