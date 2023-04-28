@@ -108,7 +108,7 @@ def reset_password():
         return jsonify({'status': 'Failed to generate reset token'}), 500
 
     # Send reset password email
-    send_password_reset_email(user.email, token)
+    #send_password_reset_email(user.email, token)
 
     return jsonify({'status': 'Password reset email sent to ' + user.email})
 
