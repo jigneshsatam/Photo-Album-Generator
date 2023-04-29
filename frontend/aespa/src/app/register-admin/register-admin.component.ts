@@ -45,12 +45,8 @@ export class AdminRegisterComponent {
     this.loading = true;
     this.http.post<any>(this.apiUrl, this.form.value)
       .subscribe((data: any) => {
-        if (this.form.value.userType == "admin") {
-          this.router.navigate(['../admin'], { relativeTo: this.route });
-        } else {
-          this.router.navigate(['../guest'], { relativeTo: this.route });
-        }
-        
+        this.loading = false; 
+        this.router.navigate(['../admin'], { relativeTo: this.route });
       },
       error => {
         console.log("Register error: ", error);

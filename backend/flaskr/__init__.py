@@ -7,7 +7,7 @@ from . import db
 from .image_management.image_controller import images_routes
 from .user_management.user_controller import users_routes
 from .cache.session_store import SessionStore
-
+from .tag_management.tag_controller import tag_routes
 
 def create_app(test_config=None):
   # create and configure the app
@@ -44,6 +44,7 @@ def create_app(test_config=None):
 
   app.register_blueprint(images_routes)
   app.register_blueprint(users_routes)
+  app.register_blueprint(tag_routes)
 
   #db.init_app(app)
 

@@ -14,12 +14,14 @@ export class GuestLoadImagesComponent {
   tags: any[] = [
   ];
   apiUrl = 'http://localhost:8827/images/load?directory=uploads/images';
+  getTagUrl = 'http://localhost:8827/tags/fetchTags';
   images: Image[] = [];
 
   constructor(private http: HttpClient, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.getImages();
+    this.getTags();
     this.heroForm = this.fb.group({
       selectedTagIds: [],
     });
@@ -39,6 +41,16 @@ export class GuestLoadImagesComponent {
         });
   }
 
+  getTags() {
+    this.http.get<any>(this.getTagUrl)
+      .subscribe((data: any) => {
+        this.tags = data.tags;
+      },
+        error => {
+          console.log("getImages error: ", error);
+        });
+  }
+
   selectAll() {
     this.heroForm.get('selectedTagIds').setValue(this.tags);
   }
@@ -48,7 +60,7 @@ export class GuestLoadImagesComponent {
   }
 
   addCustomTag = (term: string) => {
-    this.tags = this.tags.concat({ value: term, text: term });
-    return { value: term, text: term };
+    this.tags = this.tags.concat({ id: term, name: term });
+    return { id: term, name: term };
   };
 }
