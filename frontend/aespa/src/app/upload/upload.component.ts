@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-upload',
@@ -9,47 +10,84 @@ import { HttpClient } from '@angular/common/http';
 export class UploadComponent implements OnInit {
   selectedItem: { name: string; type: string } | null = null;
   showFileExplorer = false;
-  folders = ['folder1', 'folder2', 'folder3']; // Replace this with your folder names
-  files = ['file1.txt', 'file2.txt', 'file3.txt']; // Replace this with your file names
+  folders = ['folder1', 'folder2', 'folder3']; 
+  files = ['file1.txt', 'file2.txt', 'file3.txt'];
+  apiUrl =   'http://localhost:8827/images/GetSubDirAndFiles'
+  //TODO: add stack to keep track of previous folders
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    const json = {"dirPath" : "/"};
+    const headers = { 'content-type': 'application/json'}
+
+    this.http.post(this.apiUrl, json, { headers }
+    ).subscribe((response: any) => {
+      console.log(response.path);
+      console.log(response);
+      this.folders = response.Directories;
+      this.files = response.Files;
+    });
   }
 
   toggleFileExplorer(): void {
     this.showFileExplorer = !this.showFileExplorer;
+    if (!this.showFileExplorer) {
+      this.navigateTo('/');
+    }
   }
 
   navigateTo(folder: string): void {
-    this.http.get(`http://localhost:5000/api/folder-path?folder=${folder}`).subscribe((response: any) => {
+    var json = {"dirPath" : folder};
+    var headers = { 'content-type': 'application/json'}
+    this.http.post(this.apiUrl, json, { headers } ).subscribe((response: any) => {
       console.log(response.path);
   
-      // Mock API response
-      const mockResponse = {
-        folders: ['subfolder1', 'subfolder2', 'subfolder3'],
-        files: ['file4.txt', 'file5.txt', 'file6.txt']
-      };
-  
       // Update folders and files based on the response
-      this.folders = mockResponse.folders;
-      this.files = mockResponse.files;
+      this.folders = response.Directories;
+      this.files = response.Files;
     });
   }
 
-
+  // go to subdir
   selectItem(item: string, type: string): void {
     this.selectedItem = { name: item, type };
+    console.log(`Selected item: ${this.selectedItem.name}, type: ${this.selectedItem.type}`);
+  }
+
+  onDoubleClick(item: string, type: string): void {
+    this.selectedItem = { name: item, type };
+    this.navigateTo(item)
   }
   
+  // FINAL SELECT
   select(): void {
     if (!this.selectedItem) {
       console.log('No item selected');
       return;
     }
 
-    console.log(`Selected item: ${this.selectedItem.name}, type: ${this.selectedItem.type}`);
-    // Use the selected item's path and type as needed
+    var data = this.selectedItem.name;
+    var post_url = 'http://localhost:8827/images/AddNewDirectory';
+    var json = {
+      "dirPath" : this.selectedItem.name + '/',
+      "userId" : 1
+  }
+
+    // PASS THE path to the backend
+    var headers = { 'content-type': 'application/json'}
+    this.http.post(post_url, json, { headers, observe: 'response', responseType: 'json'  }).subscribe((response: HttpResponse<any>) => {
+      console.log(response);
+      console.log(response.body)
+      if(response.status == 200){
+        this.router.navigate(['admin/load-images'], {    state: { data: data },
+      });
+          // SEND THE PATH TO THE LOAD IMAGE COMPONENT
+      }
+      else {
+        console.log("Error, could not add directory. status: " + response.status + ", status code: " + response.body.status + "");
+      }
+    });
   }
 
   cancel(): void {
