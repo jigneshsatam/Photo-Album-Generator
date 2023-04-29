@@ -2,7 +2,7 @@ import json
 import os
 import errno
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify, request, make_response
 
 from .image_model import Image
 
@@ -27,6 +27,8 @@ def load() -> str:
 def history():
   return Response(f"Looks like there are no purchases!")
 
+# RICPADILLA DELETE WHEN DONE
+# TODO: USE THIS API CALL TO STORE THE DIR. IN THE DB
 @images_routes.route("/AddNewDirectory", methods=['POST'])
 def add_new_directory():
   # Check if data is provided in request
@@ -52,7 +54,11 @@ def add_new_directory():
   dir_id, result = Image.add_new_directory(user_id, dir_path)
 
   if result:
-    return jsonify({'status': 'New directory has been added successfully.', 'directoryId': dir_id})
+    data = {
+      'status': 'New directory has been added successfully.',
+      'directoryId': dir_id
+    }
+    return make_response(jsonify(data), 200)
   else:
     return jsonify({'status': 'Fail! New directory has not been added.'}), 500
   
@@ -77,10 +83,11 @@ def delete_album(id) -> str:
     else:
         return jsonify({'status': 'fail'}), 500
     
-@images_routes.route("/GetSubDirAndFiles", methods=['GET'])
+@images_routes.route("/GetSubDirAndFiles", methods=['POST'])
 def get_subdirectories_and_files():
    # Check if data is provided in request
-  if not request.data:
+  data = request.get_json()
+  if not data:
     return jsonify({'status': 'JSON data is missing'}), 404
   
   # Get directory path from request
