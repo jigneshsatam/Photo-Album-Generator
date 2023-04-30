@@ -111,3 +111,33 @@ class Image:
       result = False
       
     return id, result
+  
+  def get_images_from_tags(user_id, tag_list):
+    try:
+      conn = Connect().get_connection()
+      result = []
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      # Insert new directory path
+      tag_list_string = ', '.join(tag_list)
+      query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from userinfo inner join imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(user_id)
+      #logging.warn(query)
+      cursor.execute(query)
+
+      # Store result in dictionary object
+      for row in cursor.fetchall():
+        result.append({
+          "imageId": row[0],
+          "imagePath": row[1],
+          "directoryPath": row[2]
+        })
+
+      conn.commit()
+      cursor.close()
+
+    except Exception as e:
+      logging.error(e)
+
+    return result
