@@ -12,7 +12,7 @@ import { GuestLandingComponent } from './guest-landing/guest-landing.component';
 import { UploadComponent } from './upload/upload.component';
 
 const routes: Routes = [
-  { path: '', component: LoadImagesComponent },
+  { path: '', component: AdminLandingComponent },
   { path: 'register-admin', component: AdminRegisterComponent },
   { path: 'register-guest', component: GuestRegisterComponent },
   { path: 'login', component: LoginComponent },
