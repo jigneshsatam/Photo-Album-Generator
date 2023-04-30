@@ -3,13 +3,30 @@ from .tagging_model import Taging
 tagging_routes = Blueprint("tagging_routes", __name__, url_prefix="/tagging")
 
 
-@tagging_routes.route('/taged', methods= ['POST'])
+@tagging_routes.route('/', methods= ['POST'])
 def tag_image():
     #check
     if not request.data:
-        return jsonify({'request': 'No JSON data provided'}), 404
+        return jsonify({'request': 'No JSON data provided'}), 400
+    
+
+    if request.json.get('dir_id') == None:
+        return jsonify({'request': 'No dir_id is provided'}), 400
+    
+    dir_id = request.json.get('dir_id')
+
+
+    if request.json.get('tags') == None and len(request.json.get('tags')) == 0:
+        return jsonify({'request': 'No tags are provided'}), 400
+    
+    tags = request.json.get('tags')
+
+    temp_tag_ids = Taging.create_tagging(dir_id, tags)
+
+    return jsonify({'tag_ids:': temp_tag_ids }), 200
+
     #check and get image ID
-    if str(request.json.get('photo_id') != 'None'):
+    if str(request.json.get('photo_id') != None):
         try:
             img_id = int(request.json.get('photo_id'))
         except:
