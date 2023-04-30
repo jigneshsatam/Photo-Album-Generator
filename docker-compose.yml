@@ -17,17 +17,17 @@ services:
     networks:
       - photo_album_generator_nw
 
-  pgadmin-compose:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "test123!"
-    ports:
-      - "16543:80"
-    depends_on:
-      - database
-    networks:
-      - photo_album_generator_nw
+  # pgadmin-compose:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "test123!"
+  #   ports:
+  #     - "16543:80"
+  #   depends_on:
+  #     - database
+  #   networks:
+  #     - photo_album_generator_nw
 
   backend:
     # image: jigneshsatam/backend:latest
@@ -47,7 +47,7 @@ services:
       - database:database
 
   frontend:
-    image: jigneshsatam/frontend:latest
+    # image: jigneshsatam/frontend:latest
     build: frontend
     volumes:
       - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
@@ -57,19 +57,20 @@ services:
     networks:
       - photo_album_generator_nw
 
-  frontend-dev:
-    # image: jigneshsatam/frontend-dev:latest
-    build:
-      context: frontend
-      dockerfile: Dockerfile-dev
-    volumes:
-      - ./frontend/aespa:/app
-      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
-    ports:
-      - "4300:4200"
-    networks:
-      - photo_album_generator_nw
-    command: npm start
+  # frontend-dev:
+  #   # image: jigneshsatam/frontend-dev:latest
+  #   build:
+  #     context: frontend
+  #     dockerfile: Dockerfile-dev
+  #   volumes:
+  #     # - ./frontend/aespa/src:/app/src
+  #     # - /app/node_modules
+  #     - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+  #   ports:
+  #     - "4300:4200"
+  #   networks:
+  #     - photo_album_generator_nw
+  #   command: npm start
 
   cache:
     image: "redis:alpine"
