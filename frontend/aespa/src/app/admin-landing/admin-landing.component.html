@@ -8,12 +8,23 @@
     .container.bg-faded {
       min-height: 100vh;
     }
+
   </style>
 </head>
 <!-- Tiles for album list list spread -->
+
 <div class="p-3 mb-2 bg-light text-dark">
   <div class="container bg-faded">
-    <h1 class="text-center">My Albums</h1>
+    <div class="row justify-content-between align-items-center">
+      <div class="col-md-7">
+        <h1 class="text-end">My Albums</h1>
+      </div>
+      <div class="col-md-5 d-flex justify-content-end"><button type="button" class="btn btn-success" (click)="onNewDirectory()">Add New
+  Directory</button>
+      <button type="button" class="btn btn-primary ms-3" (click)="onAddGuest()">Add a Guest</button>
+  </div>
+  
+  </div>
     <div class="row">
     </div>
     <!-- When atleast 1 album exists in DB -->
@@ -36,6 +47,7 @@
         </div>
       </div>
     </div>
+    
     <!-- Message when no album exists -->
     <div class="row" *ngIf="!isLoading && albums.length == 0">
       <h5 style="text-align: center; margin-top:40px;">You have no albums!</h5>
