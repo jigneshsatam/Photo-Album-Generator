@@ -14,7 +14,7 @@
               placeholder="Select Tags"
               clearAllText="Clear"
               formControlName="selectedTagIds"
-              [bindLabel]="'text'"
+              [bindLabel]="'name'"
               addTagText="Add Tag"
               placeholder="Search Tags"
               class="customTagCss"
@@ -68,7 +68,7 @@
                     [ngModel]="item$.selected"
                     [ngModelOptions]="{ standalone: true }"
                   />
-                  <span class="m-2">{{ item['text'] }}</span>
+                  <span class="m-2">{{ item['name'] }}</span>
                 </div>
               </ng-template>
             </ng-select>

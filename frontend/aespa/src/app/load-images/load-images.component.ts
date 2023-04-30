@@ -16,6 +16,8 @@ export class LoadImagesComponent {
   tags: any[] = [
   ];
   apiUrl = 'http://localhost:8827/images/load?directory=uploads/images';
+  getTagUrl = 'http://localhost:8827/tags/fetchTags';
+  addTagUrl = 'http://localhost:8827/tags/addTags'
   images: Image[] = [];
   uploadRecieved = false;
   dataRecieved = "";
@@ -36,6 +38,7 @@ export class LoadImagesComponent {
     }
 
     this.getImages();
+    this.getTags();
     this.heroForm = this.fb.group({
       selectedTagIds: [],
     });
@@ -64,6 +67,34 @@ export class LoadImagesComponent {
         });
   }
 
+  getTags() {
+    this.http.get<any>(this.getTagUrl)
+      .subscribe((data: any) => {
+        this.tags = data.tags;
+      },
+        error => {
+          console.log("getImages error: ", error);
+        });
+  }
+
+addTags() {
+    const tags:any[] = [];
+    if(this.heroForm.value.selectedTagIds.length) {
+        this.heroForm.value.selectedTagIds.forEach((element: any) => {
+            tags.push(element.name)
+        });
+        const payload = {
+            tags
+        }
+        this.http.post<any>(this.addTagUrl,payload).subscribe((data: any) => {
+          alert('Tags Added');
+          this.heroForm.reset() 
+        },error => this.heroForm.reset());
+    } else {
+        alert('no Tags Added');
+      }
+  }
+
   selectAll() {
     this.heroForm.get('selectedTagIds').setValue(this.tags);
   }
@@ -73,7 +104,7 @@ export class LoadImagesComponent {
   }
 
   addCustomTag = (term: string) => {
-    this.tags = this.tags.concat({ value: term, text: term });
-    return { value: term, text: term };
+    this.tags = this.tags.concat({ id: term, name: term });
+    return { id: term, name: term };
   };
 }
