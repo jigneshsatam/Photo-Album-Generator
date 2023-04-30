@@ -125,3 +125,31 @@ def get_subdirectories_and_files():
      return jsonify({'status': 'No subdirectories or files found in given directory.'})
   else:
      return jsonify({'Directories': sub_dirs, 'Files': files})
+
+@images_routes.route("/FetchImagesFromTags", methods=['POST'])
+def fetch_images_from_tags():
+  # Check if data is provided in request
+  if not request.data:
+    return jsonify({'status': 'JSON data is missing'}), 404
+  
+  # Get user id from request
+  if str(request.json.get('userId')) != 'None':
+    try:
+      user_id = int(request.json.get('userId'))
+    except:
+      return jsonify({'status': 'given user id is not an integer'}), 400
+  else:
+    return jsonify({'status': 'user id is missing'}), 404
+  
+  # Get tag list from request
+  if str(request.json.get('tags')) == 'None':
+    return jsonify({"status": 'tag list is missing'}), 404
+  request_data = json.loads(request.data)
+  tag_list = []
+  for tag in request_data["tags"]:
+     tag_list.append(str(tag))
+
+  # Get images from tag list
+  result_imgs = Image.get_images_from_tags(user_id, tag_list)
+
+  return jsonify({"images": result_imgs})
