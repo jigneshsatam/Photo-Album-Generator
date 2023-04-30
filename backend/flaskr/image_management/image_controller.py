@@ -5,6 +5,7 @@ import errno
 from flask import Blueprint, Response, jsonify, request, make_response
 
 from .image_model import Image
+from util.error_util import ErrorUtil
 
 images_routes = Blueprint("images_routes", __name__, url_prefix="/images")
 
@@ -33,22 +34,22 @@ def history():
 def add_new_directory():
   # Check if data is provided in request
   if not request.data:
-    return jsonify({'status': 'JSON data is missing'}), 404
+    return ErrorUtil.get_json_response(ErrorUtil.JSON_DATA_MISSING)
   
   # Get user id from request
   if str(request.json.get('userId')) != 'None':
     try:
       user_id = int(request.json.get('userId'))
     except:
-      return jsonify({'status': 'given user id is not an integer'}), 404
+      return ErrorUtil.get_json_response(ErrorUtil.MALFORMED_USER_ID)
   else:
-    return jsonify({'status': 'user id is missing'}), 404
+    return ErrorUtil.get_json_response(ErrorUtil.NO_USER_ID)
   
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
     dir_path = str(request.json.get('dirPath'))
   else:
-    return jsonify({"status": 'directory path is missing'}), 404
+    return ErrorUtil.get_json_response(ErrorUtil.NO_DIRECTORY_PATH)
   
   # Add directory path for user in DB
   dir_id, result = Image.add_new_directory(user_id, dir_path)
@@ -60,7 +61,7 @@ def add_new_directory():
     }
     return make_response(jsonify(data), 200)
   else:
-    return jsonify({'status': 'Fail! New directory has not been added.'}), 500
+    return ErrorUtil.get_json_response(ErrorUtil.FAILED_TO_ADD_DIRECTORY)
   
 @images_routes.route("/albums", methods=['GET'])
 def get_albums() -> str:
@@ -70,7 +71,7 @@ def get_albums() -> str:
     if result:
         return jsonify({'status': 'success', 'albums': albums})
     else:
-        return jsonify({'status': 'fail'}), 500
+        return ErrorUtil.get_json_response(ErrorUtil.FAILED_TO_GET_ALBUMS)
     
 
 @images_routes.route("/albums/<id>", methods=['DELETE'])
@@ -81,29 +82,31 @@ def delete_album(id) -> str:
     if result:
         return jsonify({'status': 'success', 'id': album_id})
     else:
-        return jsonify({'status': 'fail'}), 500
+        return ErrorUtil.get_json_response(ErrorUtil.FAILED_TO_DELETE_ALBUM)
     
 @images_routes.route("/GetSubDirAndFiles", methods=['POST'])
 def get_subdirectories_and_files():
    # Check if data is provided in request
+  if not request.data:
+    return ErrorUtil.get_json_response(ErrorUtil.JSON_DATA_MISSING)
   data = request.get_json()
   if not data:
-    return jsonify({'status': 'JSON data is missing'}), 404
+    return ErrorUtil.get_json_response(ErrorUtil.JSON_DATA_MISSING)
   
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
     dir_path = str(request.json.get('dirPath')).rstrip("/")
   else:
-    return jsonify({"status": 'directory path is missing'}), 404
+    return ErrorUtil.get_json_response(ErrorUtil.NO_DIRECTORY_PATH)
   
   # Scan given directory
   try:
      dir_entry_objects = os.scandir('/app/uploads/' + dir_path)
   except OSError as error:
      if error.errno in (errno.EACCES, errno.EPERM):
-        return jsonify({"status": 'permission denied when accessing directory'}), 401
+        return ErrorUtil.get_json_response(ErrorUtil.DIR_PERMISSION_DENIED)
      elif error.errno == errno.ENOENT:
-        return jsonify({"status": 'directory not found'}), 404
+        return ErrorUtil.get_json_response(ErrorUtil.DIR_NOT_FOUND)
      else:
         return jsonify({"status": error}), 500
 
@@ -122,7 +125,7 @@ def get_subdirectories_and_files():
   dir_entry_objects.close()
 
   if sub_dirs.count == 0 and files.count == 0:
-     return jsonify({'status': 'No subdirectories or files found in given directory.'})
+     return ErrorUtil.get_json_response(ErrorUtil.DIR_IS_EMPTY)
   else:
      return jsonify({'Directories': sub_dirs, 'Files': files})
 
