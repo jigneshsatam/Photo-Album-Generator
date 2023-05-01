@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminLandingComponent },
   { path: 'admin/upload', component: UploadComponent },
-  { path: 'admin/load-images', component: LoadImagesComponent },
+  { path: 'admin/:id/load-images', component: LoadImagesComponent },
   { path: 'guest/load-images', component: GuestLoadImagesComponent },
   { path: 'guest', component: GuestLandingComponent },
   { path: 'guest/view', component: ViewImagesComponent },
