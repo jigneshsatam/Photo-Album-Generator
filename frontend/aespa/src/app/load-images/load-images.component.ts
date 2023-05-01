@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -23,7 +23,8 @@ export class LoadImagesComponent {
   dataRecieved = "";
 
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private route: ActivatedRoute, private router: Router) { }
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) { }
+
 
   ngOnInit() {
     const dataReceived = history.state.data;
@@ -107,4 +108,8 @@ addTags() {
     this.tags = this.tags.concat({ id: term, name: term });
     return { id: term, name: term };
   };
+
+  onDone() {
+    this.router.navigate(['../admin/']);
+  }
 }

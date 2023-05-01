@@ -38,7 +38,7 @@
               <i class="bi bi-three-dots-vertical kebab"></i>
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item">Update Tags</a></li>
+              <li><a class="dropdown-item" (click)="onLoadImages(album)">Update Tags</a></li>
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal" (click)="onDelete(album)">Delete</a></li>
             </ul>
           </div>

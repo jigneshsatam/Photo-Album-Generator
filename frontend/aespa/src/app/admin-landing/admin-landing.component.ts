@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-admin-landing',
   templateUrl: './admin-landing.component.html',
-  styleUrls: ['./admin-landing.component.css'],
-  
+  styleUrls: ['./admin-landing.component.css']
 })
 
 export class AdminLandingComponent {
@@ -55,6 +54,12 @@ export class AdminLandingComponent {
   onAddGuest() {
     this.router.navigate(['../register-guest']);
   }
+
+  onLoadImages(album: any) {
+    const id = album.id;
+    this.router.navigate([`/admin/${id}/load-images`]);
+  }
+  
 }
 
 

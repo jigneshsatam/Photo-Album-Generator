@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-load-images',
@@ -17,7 +18,7 @@ export class GuestLoadImagesComponent {
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
   images: Image[] = [];
 
-  constructor(private http: HttpClient, private fb: FormBuilder) { }
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit() {
     this.getImages();
@@ -63,4 +64,8 @@ export class GuestLoadImagesComponent {
     this.tags = this.tags.concat({ id: term, name: term });
     return { id: term, name: term };
   };
+
+  onDone() {
+    this.router.navigate(['../guest/slideshow/']);
+  }
 }
