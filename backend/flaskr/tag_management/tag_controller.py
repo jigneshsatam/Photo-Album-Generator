@@ -7,11 +7,10 @@ tag_routes = Blueprint("tag_routes", __name__, url_prefix="/tags")
 @tag_routes.route("/addTags", methods=['POST'])
 def create_tag():
     # Create Tag in DB
-    tag_id, result = Tag.create_tag((request.json.get('tags')))
+    result = Tag.create_tag((request.json.get('tags')))
 
     if result:
-        return jsonify({'status': 'Tag has been Created',
-                         'tagId': tag_id})
+        return jsonify({'status': 'Tag has been Created'})
     else:
         return jsonify({'status': 'Tag creation failed'}), 500
 

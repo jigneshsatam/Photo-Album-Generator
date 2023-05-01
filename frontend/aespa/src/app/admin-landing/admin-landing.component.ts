@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-landing',
   templateUrl: './admin-landing.component.html',
-  styleUrls: ['./admin-landing.component.css']
+  styleUrls: ['./admin-landing.component.css'],
+  
 })
 
 export class AdminLandingComponent {
@@ -14,7 +16,7 @@ export class AdminLandingComponent {
   selectedAlbum: any = {};
   isLoading: boolean = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
     this.getAlbums();
@@ -45,4 +47,14 @@ export class AdminLandingComponent {
         console.log("deleteAlbum error: ", error);
       }); 
   }
+
+  onNewDirectory() {
+    this.router.navigate(['../admin/upload']);
+  }
+
+  onAddGuest() {
+    this.router.navigate(['../register-guest']);
+  }
 }
+
+
