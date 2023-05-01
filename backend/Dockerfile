@@ -5,7 +5,7 @@ RUN python -m ensurepip --upgrade
 
 WORKDIR /app
 
-RUN apk add --no-cache gcc musl-dev linux-headers
+RUN apk add --no-cache gcc musl-dev linux-headers libpq-dev
 
 # ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
