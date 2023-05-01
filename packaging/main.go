@@ -1,3 +1,5 @@
+//go:generate cp ../postgres-sql/create-tables.sql create-tables.sql
+
 package main
 
 import (
@@ -24,11 +26,14 @@ var macDocker string
 //go:embed windows-docker.sh
 var windowsDocker string
 
+//go:embed create-tables.sql
+var schema string
+
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
 func main() {
-
+	createSchema()
 	switch runtime.GOOS {
 	case "windows":
 		defer shutdownDockerWindows()
@@ -114,6 +119,13 @@ func shutdownDockerWindows() {
 
 func createDockerComposeYAML() {
 	err := os.WriteFile("docker-compose.yml", []byte(dockerCompse), 0644)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+}
+
+func createSchema() {
+	err := os.WriteFile("Photo-Generator-Pictures/create-tables.sql", []byte(schema), 0644)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}

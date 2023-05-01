@@ -2,7 +2,7 @@ import json
 import os
 import errno
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify, request, make_response
 
 from .image_model import Image
 
@@ -27,6 +27,8 @@ def load() -> str:
 def history():
   return Response(f"Looks like there are no purchases!")
 
+# RICPADILLA DELETE WHEN DONE
+# TODO: USE THIS API CALL TO STORE THE DIR. IN THE DB
 @images_routes.route("/AddNewDirectory", methods=['POST'])
 def add_new_directory():
   # Check if data is provided in request
@@ -52,7 +54,11 @@ def add_new_directory():
   dir_id, result = Image.add_new_directory(user_id, dir_path)
 
   if result:
-    return jsonify({'status': 'New directory has been added successfully.', 'directoryId': dir_id})
+    data = {
+      'status': 'New directory has been added successfully.',
+      'directoryId': dir_id
+    }
+    return make_response(jsonify(data), 200)
   else:
     return jsonify({'status': 'Fail! New directory has not been added.'}), 500
   
@@ -77,10 +83,11 @@ def delete_album(id) -> str:
     else:
         return jsonify({'status': 'fail'}), 500
     
-@images_routes.route("/GetSubDirAndFiles", methods=['GET'])
+@images_routes.route("/GetSubDirAndFiles", methods=['POST'])
 def get_subdirectories_and_files():
    # Check if data is provided in request
-  if not request.data:
+  data = request.get_json()
+  if not data:
     return jsonify({'status': 'JSON data is missing'}), 404
   
   # Get directory path from request
@@ -118,3 +125,31 @@ def get_subdirectories_and_files():
      return jsonify({'status': 'No subdirectories or files found in given directory.'})
   else:
      return jsonify({'Directories': sub_dirs, 'Files': files})
+
+@images_routes.route("/FetchImagesFromTags", methods=['POST'])
+def fetch_images_from_tags():
+  # Check if data is provided in request
+  if not request.data:
+    return jsonify({'status': 'JSON data is missing'}), 404
+  
+  # Get user id from request
+  if str(request.json.get('userId')) != 'None':
+    try:
+      user_id = int(request.json.get('userId'))
+    except:
+      return jsonify({'status': 'given user id is not an integer'}), 400
+  else:
+    return jsonify({'status': 'user id is missing'}), 404
+  
+  # Get tag list from request
+  if str(request.json.get('tags')) == 'None':
+    return jsonify({"status": 'tag list is missing'}), 404
+  request_data = json.loads(request.data)
+  tag_list = []
+  for tag in request_data["tags"]:
+     tag_list.append(str(tag))
+
+  # Get images from tag list
+  result_imgs = Image.get_images_from_tags(user_id, tag_list)
+
+  return jsonify({"images": result_imgs})

@@ -4,6 +4,7 @@ import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-load-images',
   templateUrl: './load-images.component.html',
@@ -18,10 +19,25 @@ export class LoadImagesComponent {
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
   addTagUrl = 'http://localhost:8827/tags/addTags'
   images: Image[] = [];
+  uploadRecieved = false;
+  dataRecieved = "";
+
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) { }
 
+
   ngOnInit() {
+    const dataReceived = history.state.data;
+
+    if (dataReceived) {
+      console.log('Data received:', dataReceived);
+      this.dataRecieved = dataReceived;
+      this.uploadRecieved = true;
+    } else {
+      console.log('No data received');
+      this.uploadRecieved = false;
+    }
+
     this.getImages();
     this.getTags();
     this.heroForm = this.fb.group({
@@ -30,8 +46,17 @@ export class LoadImagesComponent {
   }
 
   getImages() {
-    this.http.get<any>(this.apiUrl)
+    var url = "";
+    if(!this.uploadRecieved) {
+      url = this.apiUrl;
+    }
+    else {
+      url = 'http://localhost:8827/images/load?directory=uploads/' + this.dataRecieved;
+      console.log("url: ", url);
+    }
+    this.http.get<any>(url)
       .subscribe((data: any) => {
+        console.log(data);
         data["images"].forEach((element: Image) => {
           element["path"] = "assets/" + element.path;
           this.images.push(element);

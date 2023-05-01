@@ -1,17 +1,22 @@
 # use the official node docker file
-FROM node:18-alpine AS build
+FROM node:20.0.0-alpine AS build
 
 # set the working directory
 WORKDIR /app
 
 # copy the package.json file to the working directory
 COPY aespa/package.json .
+COPY aespa/package-lock.json .
 
 # install dependencies
 RUN npm install
 
+# RUN npm install @angular/fire firebase --save
+
 # copy the rest of the files to the working directory
 COPY aespa/. .
+
+# RUN NODE_ENV=development npm i
 
 # build the app
 RUN npm run build --prod
