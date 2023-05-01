@@ -34,7 +34,7 @@ def add_new_directory():
   # Check if data is provided in request
   if not request.data:
     return jsonify({'status': 'JSON data is missing'}), 404
-  
+
   # Get user id from request
   if str(request.json.get('userId')) != 'None':
     try:
@@ -43,13 +43,13 @@ def add_new_directory():
       return jsonify({'status': 'given user id is not an integer'}), 404
   else:
     return jsonify({'status': 'user id is missing'}), 404
-  
+
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
     dir_path = str(request.json.get('dirPath'))
   else:
     return jsonify({"status": 'directory path is missing'}), 404
-  
+
   # Add directory path for user in DB
   dir_id, result = Image.add_new_directory(user_id, dir_path)
 
@@ -61,7 +61,7 @@ def add_new_directory():
     return make_response(jsonify(data), 200)
   else:
     return jsonify({'status': 'Fail! New directory has not been added.'}), 500
-  
+
 @images_routes.route("/albums", methods=['GET'])
 def get_albums() -> str:
 
@@ -71,7 +71,7 @@ def get_albums() -> str:
         return jsonify({'status': 'success', 'albums': albums})
     else:
         return jsonify({'status': 'fail'}), 500
-    
+
 
 @images_routes.route("/albums/<id>", methods=['DELETE'])
 def delete_album(id) -> str:
@@ -82,20 +82,20 @@ def delete_album(id) -> str:
         return jsonify({'status': 'success', 'id': album_id})
     else:
         return jsonify({'status': 'fail'}), 500
-    
+
 @images_routes.route("/GetSubDirAndFiles", methods=['POST'])
 def get_subdirectories_and_files():
    # Check if data is provided in request
   data = request.get_json()
   if not data:
     return jsonify({'status': 'JSON data is missing'}), 404
-  
+
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
     dir_path = str(request.json.get('dirPath')).rstrip("/")
   else:
     return jsonify({"status": 'directory path is missing'}), 404
-  
+
   # Scan given directory
   try:
      dir_entry_objects = os.scandir('/app/uploads/' + dir_path)
@@ -113,11 +113,11 @@ def get_subdirectories_and_files():
   if dir_path != "":
            dir_path = dir_path + '/'
   for dir_entry in dir_entry_objects:
-     if dir_entry.is_dir():         
+     if dir_entry.is_dir():
         sub_dirs.append(dir_path + dir_entry.name)
 
-     if dir_entry.is_file():
-        files.append(dir_path + dir_entry.name)
+    #  if dir_entry.is_file():
+    #     files.append(dir_path + dir_entry.name)
 
   dir_entry_objects.close()
 
@@ -131,7 +131,7 @@ def fetch_images_from_tags():
   # Check if data is provided in request
   if not request.data:
     return jsonify({'status': 'JSON data is missing'}), 404
-  
+
   # Get user id from request
   if str(request.json.get('userId')) != 'None':
     try:
@@ -140,7 +140,7 @@ def fetch_images_from_tags():
       return jsonify({'status': 'given user id is not an integer'}), 400
   else:
     return jsonify({'status': 'user id is missing'}), 404
-  
+
   # Get tag list from request
   if str(request.json.get('tags')) == 'None':
     return jsonify({"status": 'tag list is missing'}), 404

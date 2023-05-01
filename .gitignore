@@ -133,3 +133,6 @@ dmypy.json
 .DS_Store
 
 data/*
+
+Photo-Generator-Pictures/*
+test_folder/*
