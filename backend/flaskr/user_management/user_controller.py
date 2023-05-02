@@ -34,11 +34,21 @@ def register_user():
     else:
         return jsonify({'status': 'last name is missing'}), 404
 
-    # Get user type from request
-    user_type = str(request.json.get('userType')) if str(request.json.get('userType')) != "None" else "admin"
+    # Get admin id from request
+    if str(request.json.get('adminId')) != 'None':
+        try:
+            admin_id = int(request.json.get('adminId'))
+        except:
+            return jsonify({'status': 'given admin id is not an integer'}), 400
+    else:
+        admin_id = -1
+
+    user_type = 'admin'
+    if admin_id != -1:
+        user_type = 'guest'
 
     # Create user in DB
-    user_id, result = User.create_user(user_name, password, first_name, last_name, user_type)
+    user_id, result = User.create_user(user_name, password, first_name, last_name, admin_id)
 
     if result:
         return jsonify({'status': 'Account has been registered for ' + last_name + ', ' + first_name,
