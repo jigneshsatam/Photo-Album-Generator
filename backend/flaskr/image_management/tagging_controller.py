@@ -25,31 +25,51 @@ def tag_all_images():
 
     return jsonify({'tag_ids:': temp_tag_ids }), 200
 
+
 @tagging_routes.route('/tag-image', methods= ['POST'])
 def tag_image():
-    if str(request.json.get('photo_id') != None):
-        try:
-            img_id = int(request.json.get('photo_id'))
-        except:
-            return jsonify({'error': 'ID is of incorrect type'}),400
-    else:
-        return jsonify({'error:': 'image id not provided' }),400
-    #check and get tag ID
+    if not request.data:
+        return jsonify({'request': 'No JSON data provided'}), 404
 
-    if str(request.json.get('tag_id') != 'None'):
+    if str(request.json.get('photo_id') != 'None'):
         try:
-            tag_id = int(request.json.get('tag_id'))
+            photo_id = int(request.json.get('photo_id'))
         except:
-            return jsonify({'error': 'ID is of incorrect type'}),400
+            return jsonify({'error': 'Photo ID is of incorrect type'}),404
     else:
-        return jsonify({'error:': 'tag id not provieded' }),400
+        return jsonify({'error:': 'Photo ID not provided' })
+
+    if request.json.get('tags') == None and len(request.json.get('tags')) == 0:
+        return jsonify({'request': 'No tags are provided'}), 400
+
+    tags = request.json.get('tags')
+
+    temp_tag_ids = Taging.add_tags(photo_id, tags)
+
+    return jsonify({'tag_ids:': temp_tag_ids }), 200
+    # if str(request.json.get('photo_id') != None):
+    #     try:
+    #         img_id = int(request.json.get('photo_id'))
+    #     except:
+    #         return jsonify({'error': 'photo ID is of incorrect type'}),400
+    # else:
+    #     return jsonify({'error:': 'image id not provided' }),400
+    # #check and get tag ID
+
+    # if str(request.json.get('tag_id') != 'None'):
+    #     try:
+    #         tag_id = int(request.json.get('tag_id'))
+    #     except:
+    #         return jsonify({'error': 'ID is of incorrect type'}),400
+    # else:
+    #     return jsonify({'error:': 'tag id not provieded' }),400
 
     img_tag = Taging.add_tags(tag_id, img_id)
 
-    if img_tag:
-        return f"Image: {img_id} tagged with tag: {tag_id}"
-    else:
-        return f"Image: {img_id} failed to be tagged with tag: {tag_id}"
+    # if img_tag:
+    #     return f"Image: {img_id} tagged with tag: {tag_id}"
+    # else:
+    #     return f"Image: {img_id} failed to be tagged with tag: {tag_id}"
 
 # Func to tag all images in a directory
 @tagging_routes.route('/tag-images', methods= ['POST'])
@@ -62,7 +82,7 @@ def tag_all_images_dir():
         try:
             dir_id = int(request.json.get('id'))
         except:
-            return jsonify({'error': 'ID is of incorrect type'}),404
+            return jsonify({'error': 'Directory ID is of incorrect type'}),404
     else:
         return jsonify({'error:': 'Directory id not provided' }),404
 
@@ -71,7 +91,7 @@ def tag_all_images_dir():
         try:
             tag_id = int(request.json.get('tag_id'))
         except:
-            return jsonify({'error': 'ID is of incorrect type'}),404
+            return jsonify({'error': 'Tag ID is of incorrect type'}),404
     else:
         return jsonify({'error:': 'Tag id not provieded' }),404
 
@@ -105,13 +125,13 @@ def delete_tag():
         try:
             tag_id = int(request.json.get('tag_id'))
         except:
-            return jsonify({'error': 'ID is of incorrect type'}),404
+            return jsonify({'error': 'ID is of incorrect type'}),40
     else:
-        return jsonify({'error:': 'Tag id not provided' }),404
+        return jsonify({'error:': 'Tag id not provided' }),400
 
     img_tag = Taging.delete_tags(tag_id, photo_id)
 
     if img_tag:
-        return f"Tag: {tag_id} removed from Photo: {photo_id} "
+        return f"Tag: {tag_id} was removed from Photo: {photo_id} "
     else:
-        return f" Tag : Tag: {tag_id} failed tp be removed from photo: {photo_id}"
+        return f"Tag: {tag_id} failed to be removed from photo: {photo_id}"

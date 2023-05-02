@@ -268,7 +268,6 @@ class Taging:
            conn = Connect().get_connection()
            cursor = conn.cursor()
            cursor.execute(del_query)
-           cursor.close()
            print('Tag Deleted')
 
        except Exception as e:
