@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS userinfo
     pwd character varying(50),
     firstname character varying(50),
     lastname character varying(50),
-    usertype character varying(50)
+    admin_id integer NULL
 );
 
-INSERT INTO userinfo(username, pwd, firstname, lastname, usertype)
-VALUES('defaultuser', 'password', 'Default', 'User', 'admin');
+INSERT INTO userinfo(username, pwd, firstname, lastname, admin_id)
+VALUES('defaultuser', 'password', 'Default', 'User', -1);
 
 CREATE TABLE IF NOT EXISTS imgdirectories
 (

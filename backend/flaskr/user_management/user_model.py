@@ -2,7 +2,7 @@ from flaskr.db.postgres_db_connect import Connect
 import logging
 
 class User:
-    def create_user(user_name, password, first_name, last_name, user_type):
+    def create_user(user_name, password, first_name, last_name, admin_id):
         result = False
 
         try:
@@ -11,10 +11,9 @@ class User:
             # Create cursor to perform database operations
             cursor = conn.cursor()
 
-            cursor.execute(
-            "insert into UserInfo(userName, pwd, firstName, lastName, userType)"
-            " values('" + user_name + "', '" + password + "', '" + first_name + "', '" + last_name +
-            "', '" + user_type + "') returning id")
+            cursor.execute("insert into UserInfo(userName, pwd, firstName, lastName, admin_id)"
+                           " values('" + user_name + "', '" + password + "', '" + first_name + "', '" + last_name +
+                           "', " + str(admin_id) + ") returning id")
 
             # Get id for new directory path
             user_id = int(cursor.fetchone()[0])
