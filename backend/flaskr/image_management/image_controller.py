@@ -52,21 +52,29 @@ def add_new_directory():
 
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
-    dir_path = str(request.json.get('dirPath'))
+    dir_path = str(request.json.get('dirPath')).rstrip("/")
   else:
     return jsonify({"status": 'directory path is missing'}), 404
 
   # Add directory path for user in DB
   dir_id, result = Image.add_new_directory(user_id, dir_path)
 
+  # Add photos in directory
+  img_add_result = Image.add_images(dir_id, dir_path)
+
+  if img_add_result:
+     img_add_stat = "Add directory images process was successful."
+  else:
+     img_add_stat = "Add directory images process failed."
+
   if result:
     data = {
-        'status': 'New directory has been added successfully.',
+        'status': 'New directory has been added successfully. ' + img_add_stat,
         'directoryId': dir_id
     }
     return make_response(jsonify(data), 200)
   else:
-    return jsonify({'status': 'Fail! New directory has not been added.'}), 500
+    return jsonify({'status': 'Fail! New directory has not been added. ' + img_add_stat}), 500
 
 
 @images_routes.route("/albums", methods=['GET'])

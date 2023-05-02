@@ -93,6 +93,37 @@ class Image:
       result = False
 
     return dir_id, result
+  
+  def add_images(dir_id, dir_path):
+    result = False
+    img_paths = []    
+
+    try:
+      conn = Connect().get_connection()
+
+      # Get images in directory path
+      for img in os.scandir('/app/uploads/' + dir_path):
+        if img.name.endswith(".png") or img.name.endswith(".jpg") or img.name.endswith(".jpeg"):
+          img_paths.append(img.name)
+
+      if dir_path != "":
+        dir_path = dir_path + '/'
+      
+      # Add directory images into photo table
+      if len(img_paths) > 0:
+        for path in img_paths:
+          cursor = conn.cursor()
+          insert_query = "insert into photo(photo_directory, photo_path) values(" + str(dir_id) + ", '" + str(dir_path + path) + "')"
+          cursor.execute(insert_query)
+          conn.commit()
+          cursor.close()
+
+      result = True
+    except Exception as e:
+      logging.error(e)
+      result = False
+
+    return result
 
   def get_albums():
     result = False
