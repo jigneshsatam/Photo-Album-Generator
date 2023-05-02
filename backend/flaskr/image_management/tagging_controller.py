@@ -112,6 +112,6 @@ def delete_tag():
     img_tag = Taging.delete_tags(tag_id, photo_id)
 
     if img_tag:
-        return f"Image in directory: {photo_id} tagged with tag: {tag_id}"
+        return f"Tag: {tag_id} removed from Photo: {photo_id} "
     else:
-        return f"Images in directory: {photo_id} failed to be tagged with tag: {tag_id}"
+        return f" Tag : Tag: {tag_id} failed tp be removed from photo: {photo_id}"
