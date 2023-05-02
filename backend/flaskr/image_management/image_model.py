@@ -2,8 +2,7 @@ import os
 import random
 from flaskr.db.postgres_db_connect import Connect
 import logging
-
-# from .image_model import Image
+from psycopg2.extras import RealDictCursor
 
 
 class Image:
@@ -32,35 +31,54 @@ class Image:
     return images
 
   @classmethod
-  def get_dir_path(cls, dir_id: int):
-    dir_path = ""
+  def get_iamges_with_tags(cls, dir_id: int):
+    images_with_tags_dict = {}
 
     try:
       conn = Connect().get_connection()
 
       # Create cursor to perform database operations
-      cursor = conn.cursor()
+      cursor = conn.cursor(cursor_factory=RealDictCursor)
 
       # Insert new directory path
-      query = f"select dirpath from imgdirectories where id = {dir_id}"
-      # logging.warning(query)
+      query = f"""
+        select
+          photo_id, photo_path, tag.tag_id as tag_id, tag.tag as name
+        from
+            photo
+          left join
+            tagging
+          on tagging.img_id = photo.photo_id
+          left join
+            tag
+          on tagging.tag_id = tag.tag_id
+        where
+          photo_directory = {dir_id};
+      """
+      logging.debug(query)
       cursor.execute(query)
 
       # Get id for new directory path
       if cursor.pgresult_ptr is not None:
-        dir_path = cursor.fetchone()[0]
-
-      result = True
+        for row in cursor.fetchall():
+          img_obj = images_with_tags_dict.get(
+              row["photo_id"],
+              {"photo_id": row["photo_id"], "path": row["photo_path"], "tags": []})
+          if row["tag_id"] is not None:
+            tag = {"tag_id": row["tag_id"], "name": row["name"]}
+            tags = img_obj.get("tags")
+            tags.append(tag)
+            img_obj["tags"] = tags
+          images_with_tags_dict[row["photo_id"]] = img_obj
 
     except Exception as e:
-      logging.error(e)
-      result = False
+      logging.error("Error:: Fetching images along with tags ==> ", e)
 
     finally:
       # conn.close()
       cursor.close()
 
-    return dir_path, result
+    return list(images_with_tags_dict.values())
 
   def add_new_directory(user_id, dir_path):
     # logging.warning('Start add new directory function')
@@ -93,35 +111,37 @@ class Image:
       result = False
 
     return dir_id, result
-  
+
   def add_images(dir_id, dir_path):
     result = False
-    img_paths = []    
+    img_paths = []
 
     try:
       conn = Connect().get_connection()
 
       # Get images in directory path
-      for img in os.scandir('/app/uploads/' + dir_path):
+      for img in os.scandir('uploads/' + dir_path):
         if img.name.endswith(".png") or img.name.endswith(".jpg") or img.name.endswith(".jpeg"):
-          img_paths.append(img.name)
+          img_paths.append(img.path)
 
-      if dir_path != "":
-        dir_path = dir_path + '/'
-      
+      # if dir_path != "":
+      #   dir_path = dir_path + '/'
+
       # Add directory images into photo table
       if len(img_paths) > 0:
         for path in img_paths:
           cursor = conn.cursor()
-          insert_query = "insert into photo(photo_directory, photo_path) values(" + str(dir_id) + ", '" + str(dir_path + path) + "')"
+          insert_query = "insert into photo(photo_directory, photo_path) values(" + str(
+              dir_id) + ", '" + str(path) + "')"
           cursor.execute(insert_query)
           conn.commit()
-          cursor.close()
 
       result = True
     except Exception as e:
       logging.error(e)
       result = False
+    finally:
+      cursor.close()
 
     return result
 
