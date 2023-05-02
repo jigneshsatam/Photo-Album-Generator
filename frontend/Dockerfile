@@ -1,5 +1,5 @@
 # use the official node docker file
-FROM node:20.0.0-alpine AS build
+FROM node:18-alpine AS build
 
 # set the working directory
 WORKDIR /app

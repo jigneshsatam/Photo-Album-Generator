@@ -10,16 +10,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class UploadComponent implements OnInit {
   selectedItem: { name: string; type: string } | null = null;
   showFileExplorer = false;
-  folders = ['folder1', 'folder2', 'folder3']; 
+  folders = ['folder1', 'folder2', 'folder3'];
   files = ['file1.txt', 'file2.txt', 'file3.txt'];
-  apiUrl =   'http://localhost:8827/images/GetSubDirAndFiles'
+  apiUrl = 'http://localhost:8827/images/GetSubDirAndFiles'
   //TODO: add stack to keep track of previous folders
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    const json = {"dirPath" : "/"};
-    const headers = { 'content-type': 'application/json'}
+    const json = { "dirPath": "/" };
+    const headers = { 'content-type': 'application/json' }
 
     this.http.post(this.apiUrl, json, { headers }
     ).subscribe((response: any) => {
@@ -38,11 +38,11 @@ export class UploadComponent implements OnInit {
   }
 
   navigateTo(folder: string): void {
-    var json = {"dirPath" : folder};
-    var headers = { 'content-type': 'application/json'}
-    this.http.post(this.apiUrl, json, { headers } ).subscribe((response: any) => {
+    var json = { "dirPath": folder };
+    var headers = { 'content-type': 'application/json' }
+    this.http.post(this.apiUrl, json, { headers }).subscribe((response: any) => {
       console.log(response.path);
-  
+
       // Update folders and files based on the response
       this.folders = response.Directories;
       this.files = response.Files;
@@ -59,7 +59,7 @@ export class UploadComponent implements OnInit {
     this.selectedItem = { name: item, type };
     this.navigateTo(item)
   }
-  
+
   // FINAL SELECT
   select(): void {
     if (!this.selectedItem) {
@@ -70,19 +70,21 @@ export class UploadComponent implements OnInit {
     var data = this.selectedItem.name;
     var post_url = 'http://localhost:8827/images/AddNewDirectory';
     var json = {
-      "dirPath" : this.selectedItem.name + '/',
-      "userId" : 1
-  }
+      "dirPath": this.selectedItem.name + '/',
+      "userId": 1
+    }
 
     // PASS THE path to the backend
-    var headers = { 'content-type': 'application/json'}
-    this.http.post(post_url, json, { headers, observe: 'response', responseType: 'json'  }).subscribe((response: HttpResponse<any>) => {
+    var headers = { 'content-type': 'application/json' }
+    this.http.post(post_url, json, { headers, observe: 'response', responseType: 'json' }).subscribe((response: HttpResponse<any>) => {
       console.log(response);
       console.log(response.body)
-      if(response.status == 200){
-        this.router.navigate(['admin/load-images'], {    state: { data: data },
-      });
-          // SEND THE PATH TO THE LOAD IMAGE COMPONENT
+      if (response.status == 200) {
+        var dirID = response.body.directoryId
+        this.router.navigate([`admin/${dirID}/load-images`], {
+          state: { data: data },
+        });
+        // SEND THE PATH TO THE LOAD IMAGE COMPONENT
       }
       else {
         console.log("Error, could not add directory. status: " + response.status + ", status code: " + response.body.status + "");

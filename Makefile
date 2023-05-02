@@ -44,7 +44,7 @@ macos-build-m1:
 	GOOS=darwin GOARCH=arm64 go build -o packaging/Photo-Album-Generator-macos-arm64 packaging/main.go
 	mv packaging/Photo-Album-Generator-macos-arm64 packaging/build/
 
-	rm test_folder/Photo-Album-Generator-macos-arm64
+	rm -f test_folder/Photo-Album-Generator-macos-arm64
 	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
 
 

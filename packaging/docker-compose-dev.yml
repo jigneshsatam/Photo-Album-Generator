@@ -18,8 +18,8 @@ services:
       POSTGRES_DB: photogen
       Postgres_DB_Connection_String: 'postgresql://photogendocker:photogendocker@database:5432/photogen'
     volumes:
-      - ./Photo-Generator-Pictures/.data:/var/lib/postgresql/data
-      - ./Photo-Generator-Pictures/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+      - ./.Photo-Generator-Pictures-utils/data:/var/lib/postgresql/data
+      - ./.Photo-Generator-Pictures-utils/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
     networks:
       - photo_album_generator_nw
 
