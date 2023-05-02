@@ -33,6 +33,9 @@ var schema string
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
+// var stop = "docker compose down -v --rmi all"
+var stop = "docker compose down"
+
 func main() {
 	createUtilsDir()
 	createSchema()
@@ -104,20 +107,18 @@ func startDockerWindows() {
 	fmt.Println("Starting Application on Windows...")
 	createDockerComposeYAML()
 	runBashCommandWindows("docker compose up -d --scale backend=3")
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 	runBashCommandWindows("start http://localhost:4200")
 }
 
 func shutdownDocker() {
-	stop := "docker compose down -v"
 	runBashCommand(stop)
 	runBashCommand("rm docker-compose.yml")
 }
 
 func shutdownDockerWindows() {
-	stop := "docker compose down -v"
 	runBashCommandWindows(stop)
-	runBashCommandWindows("rm docker-compose.yml")
+	runBashCommandWindows("del docker-compose.yml")
 }
 
 func createDockerComposeYAML() {
