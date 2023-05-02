@@ -1,3 +1,5 @@
+//go:generate cp ../postgres-sql/create-tables.sql create-tables.sql
+
 package main
 
 import (
@@ -10,6 +12,7 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+	"time"
 )
 
 //go:embed get-docker.sh
@@ -24,11 +27,15 @@ var macDocker string
 //go:embed windows-docker.sh
 var windowsDocker string
 
+//go:embed create-tables.sql
+var schema string
+
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
 func main() {
-
+	createUtilsDir()
+	createSchema()
 	switch runtime.GOOS {
 	case "windows":
 		defer shutdownDockerWindows()
@@ -89,7 +96,7 @@ func startDocker() {
 
 	// runBashCommand("echo " + dockerCompse + " > docker-compose.yml")
 	runBashCommand("docker compose up -d --scale backend=3")
-
+	time.Sleep(10 * time.Second)
 	runBashCommand("open http://localhost:4200")
 }
 
@@ -97,6 +104,7 @@ func startDockerWindows() {
 	fmt.Println("Starting Application on Windows...")
 	createDockerComposeYAML()
 	runBashCommandWindows("docker compose up -d --scale backend=3")
+	time.Sleep(10 * time.Second)
 	runBashCommandWindows("start http://localhost:4200")
 }
 
@@ -114,6 +122,21 @@ func shutdownDockerWindows() {
 
 func createDockerComposeYAML() {
 	err := os.WriteFile("docker-compose.yml", []byte(dockerCompse), 0644)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+}
+
+func createUtilsDir() {
+	path := ".Photo-Generator-Pictures-utils"
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func createSchema() {
+	err := os.WriteFile(".Photo-Generator-Pictures-utils/create-tables.sql", []byte(schema), 0644)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}

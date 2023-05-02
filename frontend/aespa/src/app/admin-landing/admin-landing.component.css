@@ -1,0 +1,24 @@
+.bi-folder2-open {
+    font-size: 25px;
+}
+h6 {
+    font-size: 22px; 
+}
+.card:hover {
+    outline: 1px solid #0d6efd;
+    cursor: pointer;
+}
+.card .dropdown {
+    position: absolute;
+    right: 20px;
+}
+.card .kebab:hover {
+    opacity: 50%;
+    cursor: pointer;
+}
+.card .dropdown .kebab-container {
+    padding: 5px;
+}
+.kebab-container {
+    font-size: 19px;
+}

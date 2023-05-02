@@ -5,6 +5,7 @@ import logging
 
 # from .image_model import Image
 
+
 class Image:
   path: str = None
   tags: list[str] = []
@@ -29,9 +30,40 @@ class Image:
         images.append(Image(img.path, random.choice(dummy_tags)))
 
     return images
-  
+
+  @classmethod
+  def get_dir_path(cls, dir_id: int):
+    dir_path = ""
+
+    try:
+      conn = Connect().get_connection()
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      # Insert new directory path
+      query = f"select dirpath from imgdirectories where id = {dir_id}"
+      # logging.warning(query)
+      cursor.execute(query)
+
+      # Get id for new directory path
+      if cursor.pgresult_ptr is not None:
+        dir_path = cursor.fetchone()[0]
+
+      result = True
+
+    except Exception as e:
+      logging.error(e)
+      result = False
+
+    finally:
+      # conn.close()
+      cursor.close()
+
+    return dir_path, result
+
   def add_new_directory(user_id, dir_path):
-    #logging.warning('Start add new directory function')
+    # logging.warning('Start add new directory function')
     result = False
     dir_id = -1
 
@@ -42,25 +74,75 @@ class Image:
       cursor = conn.cursor()
 
       # Insert new directory path
-      query = "insert into imgdirectories(userid, dirpath) values(" + str(user_id) + ", '" + dir_path + "') returning id"     
-      #logging.warning(query) 
+      query = "insert into imgdirectories(userid, dirpath) values(" + str(
+          user_id) + ", '" + dir_path + "') returning id"
+      # logging.warning(query)
       cursor.execute(query)
-      
+
       # Get id for new directory path
       dir_id = int(cursor.fetchone()[0])
-      
+
       conn.commit()
 
-      conn.close()
-      
+      # conn.close()
+      cursor.close()
+
       result = True
     except Exception as e:
       logging.error(e)
       result = False
-      
-<<<<<<< Updated upstream
+
     return dir_id, result
-=======
+
+  def get_albums():
+    result = False
+    albums = []
+
+    try:
+      conn = Connect().get_connection()
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      query = "SELECT * FROM imgdirectories"
+
+      cursor.execute(query)
+
+      for row in cursor.fetchall():
+        albums.append({
+            "id": row[0],
+            "dirpath": row[2]
+        })
+
+      conn.commit()
+      cursor.close()
+
+      result = True
+    except Exception as e:
+      logging.error(e)
+      result = False
+
+    return albums, result
+
+  def delete_album(id: int):
+    result = False
+
+    try:
+      conn = Connect().get_connection()
+
+      # Create cursor to perform database operations
+      cursor = conn.cursor()
+
+      cursor.execute("DELETE FROM imgdirectories WHERE id = %s", (id,))
+
+      conn.commit()
+      cursor.close()
+
+      result = True
+    except Exception as e:
+      logging.error(e)
+      result = False
+
     return dir_id, result
   
   def add_images(dir_id, dir_path):
@@ -146,6 +228,9 @@ class Image:
       
     return id, result
   
+
+    return id, result
+
   def get_images_from_tags(user_id, tag_list):
     try:
       conn = Connect().get_connection()
@@ -156,16 +241,19 @@ class Image:
 
       # Insert new directory path
       tag_list_string = ', '.join(tag_list)
-      query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from userinfo inner join imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(user_id)
-      #logging.warn(query)
+
+      query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from userinfo inner join imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(
+          user_id)
+      # logging.warn(query)
       cursor.execute(query)
 
       # Store result in dictionary object
       for row in cursor.fetchall():
         result.append({
-          "imageId": row[0],
-          "imagePath": row[1],
-          "directoryPath": row[2]
+
+            "imageId": row[0],
+            "imagePath": row[1],
+            "directoryPath": row[2]
         })
 
       conn.commit()
@@ -175,4 +263,4 @@ class Image:
       logging.error(e)
 
     return result
->>>>>>> Stashed changes
+

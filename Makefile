@@ -1,6 +1,7 @@
 
 
 build: clean \
+	copy-files \
 	macos-build-m1 \
 	macos-build-intel \
 	linux-64-build linux-32-build \
@@ -8,6 +9,7 @@ build: clean \
 
 .PHONY: build-prod
 build-prod: clean \
+	copy-files \
 	linux-64-build linux-32-build \
 	windows-64-build windows-32-build \
 	macos-build-m1 macos-build-intel
@@ -25,12 +27,12 @@ linux-32-build:
 .PHONY: windows-64-build
 windows-64-build:
 	GOOS=windows GOARCH=amd64 go build -o packaging/Photo-Album-Generator-win-64.exe packaging/main.go
-	mv packaging/Photo-Album-Generator-64.exe packaging/build/
+	mv packaging/Photo-Album-Generator-win-64.exe packaging/build/
 
 .PHONY: windows-32-build
 windows-32-build:
 	GOOS=windows GOARCH=386 go build -o packaging/Photo-Album-Generator-win-32.exe packaging/main.go
-	mv packaging/Photo-Album-Generator-32.exe packaging/build/
+	mv packaging/Photo-Album-Generator-win-32.exe packaging/build/
 
 .PHONY: macos-build-m1
 macos-build-m1:
@@ -41,8 +43,9 @@ macos-build-m1:
 
 	GOOS=darwin GOARCH=arm64 go build -o packaging/Photo-Album-Generator-macos-arm64 packaging/main.go
 	mv packaging/Photo-Album-Generator-macos-arm64 packaging/build/
-#	rm test_folder/Photo-Album-Generator-macos-arm64
-#	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
+
+	rm -f test_folder/Photo-Album-Generator-macos-arm64
+	cp packaging/build/Photo-Album-Generator-macos-arm64 test_folder/
 
 
 .PHONY: macos-build-intel
@@ -58,6 +61,10 @@ macos-build-intel:
 clean:
 	rm -r packaging/build/Photo-Album-Generator* && echo || echo
 
+.PHONY: copy-files
+copy-files:
+	go generate packaging/main.go
+
 copy:
 	# scp -i ~/.ssh/SEED-VM_key.pem get-docker.sh jigneshsatam@20.120.94.114:/home/jigneshsatam
 
@@ -66,3 +73,19 @@ copy:
 	# scp -i ~/.ssh/SEED-VM_key.pem -r ../../Photo-Album-Generator/packaging/linux-docker.sh jigneshsatam@20.120.94.114:/home/jigneshsatam
 
 	scp -i ~/.ssh/SEED-VM_key.pem -r packaging/build/Photo-Album-Generator-linux-64 jigneshsatam@20.120.94.114:/home/jigneshsatam
+
+.PHONY: run
+run: stop-clean
+	docker compose up
+
+run-deamon:
+	docker compose up -d --scale backend=3
+	open http://localhost:4200/
+
+
+stop:
+	docker compose down
+
+
+stop-clean:
+	docker compose down -v --rmi all

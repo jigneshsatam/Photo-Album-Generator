@@ -7,6 +7,22 @@ services:
   #   # container_name: photo-album-gen-database
   #   command: [ "--app", "flaskr", "init-db" ]
 
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: photogendocker
+      POSTGRES_PASSWORD: photogendocker
+      POSTGRES_DB: photogen
+      Postgres_DB_Connection_String: 'postgresql://photogendocker:photogendocker@database:5432/photogen'
+    volumes:
+      - ./.Photo-Generator-Pictures-utils/data:/var/lib/postgresql/data
+      - ./.Photo-Generator-Pictures-utils/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+    networks:
+      - photo_album_generator_nw
+
   backend:
     image: jigneshsatam/backend:latest
     # build: backend/.
