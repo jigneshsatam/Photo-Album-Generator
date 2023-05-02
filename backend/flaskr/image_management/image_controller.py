@@ -1,6 +1,7 @@
 import json
 import os
 import errno
+import logging
 
 from flask import Blueprint, Response, jsonify, request, make_response
 
@@ -11,28 +12,14 @@ images_routes = Blueprint("images_routes", __name__, url_prefix="/images")
 
 @images_routes.route("<int:dir_id>/load", methods=['GET'])
 def load(dir_id) -> str:
+  images_with_tags = Image.get_iamges_with_tags(dir_id)
 
-  directory = request.args.to_dict().get("directory")
-  directory, result = Image.get_dir_path(dir_id)
-  images = []
-  if result == True:
-    images = Image.get_images("uploads/" + directory)
+  response = {
+      "images": images_with_tags
+  }
 
-    response = {
-        "images": [img.__dict__ for img in images]
-    }
-
-    return json.dumps(response)
-
-  return json.dumps({}), 404
-
-
-@images_routes.route("/purchases")
-def history():
-  return Response(f"Looks like there are no purchases!")
-
-# RICPADILLA DELETE WHEN DONE
-# TODO: USE THIS API CALL TO STORE THE DIR. IN THE DB
+  print(images_with_tags)
+  return json.dumps(response)
 
 
 @images_routes.route("/AddNewDirectory", methods=['POST'])
@@ -52,7 +39,7 @@ def add_new_directory():
 
   # Get directory path from request
   if str(request.json.get('dirPath')) != 'None':
-    dir_path = str(request.json.get('dirPath')).rstrip("/")
+    dir_path = str(request.json.get('dirPath'))
   else:
     return jsonify({"status": 'directory path is missing'}), 404
 
@@ -63,9 +50,9 @@ def add_new_directory():
   img_add_result = Image.add_images(dir_id, dir_path)
 
   if img_add_result:
-     img_add_stat = "Add directory images process was successful."
+    img_add_stat = "Add directory images process was successful."
   else:
-     img_add_stat = "Add directory images process failed."
+    img_add_stat = "Add directory images process failed."
 
   if result:
     data = {
