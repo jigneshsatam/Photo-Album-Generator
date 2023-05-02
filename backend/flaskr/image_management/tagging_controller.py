@@ -44,7 +44,7 @@ def tag_image():
 
     tags = request.json.get('tags')
 
-    temp_tag_ids = Taging.add_tags(photo_id, tags)
+    temp_tag_ids = Taging.tag_image(photo_id, tags)
 
     return jsonify({'tag_ids:': temp_tag_ids }), 200
     # if str(request.json.get('photo_id') != None):
