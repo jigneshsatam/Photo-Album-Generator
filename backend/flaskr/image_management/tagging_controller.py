@@ -131,7 +131,7 @@ def delete_tag():
 
     img_tag = Taging.delete_tags(tag_id, photo_id)
 
-    if img_tag:
+    if img_tag == True:
         return f"Tag: {tag_id} was removed from Photo: {photo_id} "
     else:
         return f"Tag: {tag_id} failed to be removed from photo: {photo_id}"

@@ -265,10 +265,14 @@ class Taging:
 
 
        try:
+           success = False
+
            conn = Connect().get_connection()
            cursor = conn.cursor()
            cursor.execute(del_query)
+           conn.commit()
            print('Tag Deleted')
+           success = True
 
        except Exception as e:
                  print(e)
@@ -276,3 +280,5 @@ class Taging:
 
        finally:
            cursor.close()
+
+       return success
