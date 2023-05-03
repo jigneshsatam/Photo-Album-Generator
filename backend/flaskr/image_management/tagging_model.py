@@ -17,7 +17,7 @@ class Taging:
     @classmethod
     def tag_image(cs, img_id, tag):
 
-        add_tag_query = f'INSERT INTO tagging (tag_id, img_id) VALUES("{tag_id}","{img_id}");'
+        # add_tag_query = f'INSERT INTO tagging (tag_id, img_id) VALUES("{tag_id}","{img_id}");'
         tag_in_db =[]
         #tag_with_id =[]
         tag_names =[]
@@ -29,8 +29,8 @@ class Taging:
 
 
         try:
-            conn = Connect().get_connection()
-            cursor = conn.cursor()
+            conne = Connect().get_connection()
+            cursor = conne.cursor()
             #Check for existing tags in datbase compare to what request is sending
             # get all the names a.k.a string values from request
             for t in tag:
@@ -64,7 +64,7 @@ class Taging:
                     for row in cursor.fetchall():
                         new_tag_ids.append(row[0])
 
-                conn.commit()
+                conne.commit()
                 print(new_tag_ids)
             #new tags with new id
             tag_with_ids.extend(new_tag_ids)
@@ -91,12 +91,12 @@ class Taging:
                         tagging_ids.append(row[0])
 
 
-                conn.commit()
+                conne.commit()
                 print(new_tag_ids)
             print(f"Tag: {tag_id} added to photo: {img_id}")
         except Exception as e:
             print(e)
-            print(f'Addition of tag: {tag_id} to photo:{img_id} failed')
+            print(f'Addition of tag: failed')
 
         finally:
             cursor.close
