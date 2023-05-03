@@ -14,7 +14,10 @@ export class UploadComponent implements OnInit {
   files = ['file1.txt', 'file2.txt', 'file3.txt'];
   apiUrl = 'http://localhost:8827/images/GetSubDirAndFiles'
   //TODO: add stack to keep track of previous folders
-  current_dir = "/current_dir/";
+  private stack: string[] = [];
+  base_dir = "/app/uploads";
+  current_dir = this.base_dir;
+  subDirectories: boolean = true;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
 
@@ -31,22 +34,56 @@ export class UploadComponent implements OnInit {
     });
   }
 
+  updateCurrentDir(folder: string): void {
+    if (folder === '/') {
+      this.current_dir = this.base_dir;
+      return;
+    }
+      this.current_dir = this.base_dir + "/" + folder;
+    }
+
+  push(folder: string): void {
+    this.stack.push(folder);
+  }
+
+  pop(): string | undefined {
+    return this.stack.pop();
+  }
+
+  stackIsEmpty(): boolean {
+    return this.stack.length === 0;
+  }
+
   toggleFileExplorer(): void {
     this.showFileExplorer = !this.showFileExplorer;
     if (!this.showFileExplorer) {
-      this.navigateTo('/');
+      this.navigateTo('/', false);
     }
   }
 
-  navigateTo(folder: string): void {
+  navigateTo(folder: string, back: boolean): void {
     var json = { "dirPath": folder };
     var headers = { 'content-type': 'application/json' }
     this.http.post(this.apiUrl, json, { headers }).subscribe((response: any) => {
-      console.log(response.path);
+      //console.log(response.path);
 
       // Update folders and files based on the response
       this.folders = response.Directories;
       this.files = response.Files;
+      if(folder != '/' && back == false){
+        this.push(folder);
+      }
+      this.updateCurrentDir(folder);
+
+      //if no subdirectories, alert
+      if (this.folders.length == 0) {
+      this.subDirectories = false;
+      console.log("No subdirectories", this.subDirectories);
+      }
+      else {
+        this.subDirectories = true;
+        console.log("Subdirectories", this.subDirectories);
+      }
     });
   }
 
@@ -57,13 +94,37 @@ export class UploadComponent implements OnInit {
   }
 
   onDoubleClick(item: string, type: string): void {
-    this.selectedItem = { name: item, type };
-    this.navigateTo(item)
+    //this.selectedItem = null;
+    this.navigateTo(item, false);
+  }
+
+  back(): void {
+    if (this.stackIsEmpty()) {
+      console.log('Already at root');
+      return;
+    }
+    var elem = this.stack.pop();
+    console.log("elem popped: ", elem);
+
+    if (this.stackIsEmpty()) {
+      console.log('At root')
+      this.selectedItem = null;
+      this.navigateTo('/', false);
+    }
+    else {
+      console.log("stack after pop", this.stack);
+      var back_url = this.stack[this.stack.length - 1];
+      this.selectedItem = { name: back_url, type: 'folder'};
+      console.log("THE URL TO GO TO IS: ", back_url)
+      this.navigateTo(back_url, true);
+    }
+
   }
 
   // FINAL SELECT
   select(): void {
     if (!this.selectedItem) {
+      alert('No item selected');
       console.log('No item selected');
       return;
     }
@@ -74,6 +135,8 @@ export class UploadComponent implements OnInit {
       "dirPath": this.selectedItem.name + '/',
       "userId": 1
     }
+
+    console.log("json: ", json);
 
     // PASS THE path to the backend
     var headers = { 'content-type': 'application/json' }
@@ -94,6 +157,10 @@ export class UploadComponent implements OnInit {
   }
 
   cancel(): void {
-    this.showFileExplorer = false;
+    console.log('Cancel');
+    this.stack = [];
+    this.current_dir = this.base_dir;
+    console.log(this.stack);
+    console.log(this.current_dir);
   }
 }
