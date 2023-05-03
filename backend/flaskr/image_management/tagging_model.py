@@ -1,12 +1,12 @@
 from flaskr.db.postgres_db_connect import Connect
 
 
-def parse_tags(arr):
-    for a in array:
-        if a == "null":
-           unlisted_tags =[]
-        
-    pass
+# def parse_tags(arr):
+#     for a in array:
+#         if a == "null":
+#            unlisted_tags =[]
+
+#     pass
 
 class Taging:
 
@@ -15,62 +15,35 @@ class Taging:
         self.img_id = img_id
 
     @classmethod
-    def add_tags(cs, tag_id, img_id):
-        
+    def tag_image(cs, img_id, tag):
+
         add_tag_query = f'INSERT INTO tagging (tag_id, img_id) VALUES("{tag_id}","{img_id}");'
+        tag_in_db =[]
+        img_in_db =[]
+
         try:
             conn = Connect().get_connection()
             cursor = conn.cursor()
+
+
             cursor.execute(add_tag_query)
             cursor.close()
             print(f"Tag: {tag_id} added to photo: {img_id}")
         except Exception as e:
             print(e)
             print(f'Addition of tag: {tag_id} to photo:{img_id} failed')
-   
-    @classmethod
-    def add_bulk_tags_to_dir(cs, dir_id, tag_id):
-        try:
-            # need join to obtain photo id from imgdirectories id
-            join_photo_imgDir = f'SELECT photo_id FROM (imgdirectories INNER JOIN photo ON id = photo_directory ) WHERE id = {dir_id};'
-            conn = Connect().get_connection()
-            cursor = conn.cursor()
-            cursor.execute(join_photo_imgDir )
-            photos_id = []
-             
-            for row in cursor.fetchall():
-                photos_id.append({
-                                "img_id" : row[0],
-                                  
-                                  })
-            # append 
-            # for id in photos_id:
-
-        
-            cursor.close()
-            return tagging
-
-
-            #cursor.execute(query)
-            for row in cursor.fetchall():
-                photos_id.append(row[0])
-             
-        
-        except Exception as e:
-             print(e)
-             print('Failed bulk tagging')
 
 
     @classmethod
     def get_taged_img(cs, tag_id, img_id):
-       
+
         tagged_query = f'SELECT tag_id, img_id FROM tagging WHERE tag_id = {tag_id} AND img_id = {img_id};'
-        
+
         try:
             conn = Connect().get_connection()
 
             # Create cursor to perform database operations
-            cursor = conn.cursor() 
+            cursor = conn.cursor()
             # cursor = db_temp_connection()
             print(tagged_query)
 
@@ -84,17 +57,19 @@ class Taging:
                                   })
             cursor.close()
             return tagging
-    
-        
+
+
         except Exception as e:
             print(e)
             print(f"no image:{img_id} with tag:{tag_id} ")
-    
+
         # return query_df
-        
-   
+        finally:
+            cursor.close()
+
+
     @classmethod
-    def create_tagging(cs, dir_id, tags):
+    def tag_all_images(cs, dir_id, tags):
         img_ids = []
         tag_ids = []
 
@@ -106,45 +81,70 @@ class Taging:
         new_tag_names = []
         new_tag_ids = []
 
-        for tag in tags:
-            if tag.get("tag_id") == None:
-                new_tag_names.append(f"( '{tag.get('name')}' )")
-            else:
-                tag_with_ids.append(tag.get("tag_id"))
-            
-        # Insert new tags in the database and get the IDs
-        new_tags_query = f"insert into tag(tag) values( {', '.join(new_tag_names) } ) RETURNING tag_id;"
+        # tag_names = ["'tag_new'", "'tag_new_2'"]
+        tag_names = []
 
+        tagging_ids= []
 
-        img_ids_query = f'SELECT photo_id FROM photo inner join imgdirectories on imgdirectories.id = photo.photo_id WHERE imgdirectories.id = {dir_id};'
-        
         try:
             # Create cursor to perform database operations
             conn = Connect().get_connection()
-            cursor = conn.cursor() 
+            cursor = conn.cursor()
+
+            for tag in tags:
+                tag_names.append(f"'{tag.get('name')}'")
+
+            query_get_id = f'SELECT min(tag_id), tag from tag WHERE tag in ({",".join(tag_names)}) GROUP BY tag;'
+
+            print(query_get_id)
+            cursor.execute(query_get_id)
+
+            # existing_tag_ids = []
+            existing_tags = {}
+
+            if cursor.pgresult_ptr is not None:
+                for row in cursor.fetchall():
+                    existing_tags[row[1]] = row[0]
+                    # existing_tag_ids.append(row[0])
+                    # existing_tag_names.append(row[1])
+
+            for tag in tags:
+                tag_id = existing_tags.get(tag.get("name"), None)
+                if tag_id is None:
+                    new_tag_names.append(f"( '{tag.get('name')}' )")
+                else:
+                    tag_with_ids.append(tag_id)
+
+            # Insert new tags in the database and get the IDs
+            new_tags_query = f"insert into tag(tag) values( {', '.join(new_tag_names) } ) RETURNING tag_id;"
+
+
+            img_ids_query = f'SELECT photo_id FROM photo inner join imgdirectories on imgdirectories.id = photo.photo_id WHERE imgdirectories.id = {dir_id};'
+
+
 
 
             # ============== Tags Start ======================
-            
+
             if new_tag_names:
                 print(new_tags_query)
                 cursor.execute(new_tags_query)
-                
+
                 if cursor.pgresult_ptr is not None:
                     for row in cursor.fetchall():
                         new_tag_ids.append(row[0])
 
                 conn.commit()
                 print(new_tag_ids)
-            
+
             tag_with_ids.extend(new_tag_ids)
-        
+
 
             # ============== Tags ======================
 
 
             # ============== Images Start ======================
-            
+
             print(img_ids_query)
             cursor.execute(img_ids_query)
             img_ids = []
@@ -152,10 +152,10 @@ class Taging:
             if cursor.pgresult_ptr is not None:
                 for row in cursor.fetchall():
                     img_ids.append(row[0])
-            
+
             # return img_ids
             # ============== Images ======================
-            
+
             values = []
 
             for img_id in img_ids:
@@ -164,45 +164,51 @@ class Taging:
 
 
 
-            tagging_query = f'insert into tagging(img_id, tag_id) Values {",".join(values)} returning tagging_id; '
-            tagging_ids= []
+            tagging_query = f'insert into tagging(img_id, tag_id) Values {",".join(values)} ON CONFLICT DO NOTHING returning tagging_id; '
+
             if values:
                 print(tagging_query)
                 cursor.execute(tagging_query)
-                
+
                 if cursor.pgresult_ptr is not None:
                     for row in cursor.fetchall():
                         tagging_ids.append(row[0])
-                    
+
 
                 conn.commit()
                 print(new_tag_ids)
 
-            
-            
-            
-            
-            
-            cursor.close()
-            return tagging_ids
-    
-        
+
         except Exception as e:
-            print(e)
+            print("Error::", e)
             print(f"no image:{dir_id} with tag:{tags} ")
 
+        finally:
+            cursor.close
 
-    
-    # def delete_tags(cs, tag_id, img_id):
-    #     del_query = f'DELETE FROM taging WHERE tag_id= "{tag_id}", img_id = "{img_id}";'
-    #     cursor =db_temp_connection()
-    #     try:
-    #              cursor.execute(del_query)
-    #              cursor.close()
-    #              print('Tag Deleted')
-        
-    #     except Exception as e:
-    #              print(e)
-    #              print("no tag exist")
-       
-    #     return " "
+        return tagging_ids
+
+
+    @classmethod
+    def delete_tags(cs, tag_id, img_id):
+       del_query = f'DELETE FROM taging WHERE tag_id= {tag_id} AND img_id = {img_id};'
+       tag_id =[]
+
+       conn = Connect().get_connection()
+       cursor = conn.cursor()
+
+
+
+       try:
+
+
+                 cursor.execute(del_query)
+                 cursor.close()
+                 print('Tag Deleted')
+
+       except Exception as e:
+                 print(e)
+                 print("no tag exist")
+
+       finally:
+           cursor.close()

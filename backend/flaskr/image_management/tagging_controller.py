@@ -3,8 +3,8 @@ from .tagging_model import Taging
 tagging_routes = Blueprint("tagging_routes", __name__, url_prefix="/tagging")
 
 
-@tagging_routes.route('/', methods= ['POST'])
-def tag_image():
+@tagging_routes.route('/tag-all-images', methods= ['POST'])
+def tag_all_images():
     #check
     if not request.data:
         return jsonify({'request': 'No JSON data provided'}), 400
@@ -21,7 +21,7 @@ def tag_image():
     
     tags = request.json.get('tags')
 
-    temp_tag_ids = Taging.create_tagging(dir_id, tags)
+    temp_tag_ids = Taging.tag_all_images(dir_id, tags)
 
     return jsonify({'tag_ids:': temp_tag_ids }), 200
 
@@ -84,18 +84,19 @@ def tag_all_images_dir():
 
 
 # delete tags
+@tagging_routes.route('/delete-tag', methods= ['DELETE'])
 def delete_tag():
      #check
     if not request.data:
-        return jsonify({'request': 'No JSON data provided'}), 404
+        return jsonify({'request': 'No JSON data provided'}), 400
     #check and get image ID
     if str(request.json.get('photo_id') != 'None'):
         try:
             photo_id = int(request.json.get('photo_id'))
         except:
-            return jsonify({'error': 'ID is of incorrect type'}),404
+            return jsonify({'error': 'ID is of incorrect type'}),400
     else:
-        return jsonify({'error:': 'Photo ID id not provided' }),404
+        return jsonify({'error:': 'Photo ID id not provided' }),400
     
     #check and get tag ID
     if str(request.json.get('tag_id') != 'None'):
@@ -104,7 +105,7 @@ def delete_tag():
         except:
             return jsonify({'error': 'ID is of incorrect type'}),404
     else:
-        return jsonify({'error:': 'Tag id not provieded' }),404
+        return jsonify({'error:': 'Tag id not provided' }),404
     
     img_tag = Taging.delete_tags(tag_id, photo_id)
     
