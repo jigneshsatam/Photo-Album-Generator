@@ -32,12 +32,12 @@
               </div>
             </div> <!-- subDirectories -->
             <div *ngIf="!subDirectories" class="alert alert-info" role="alert">
-              <p>There are no subdirectories in this directory.</p>
+              <p>There are no subdirectories here. Hit "Select" to choose {{ current_dir }}</p>
             </div> <!-- subDirectories -->
           </div>
 
         <div class="buttons">
-          <button class="col-md-6 mx-auto select-button btn btn-success" (click)="select()">Select Current Directory</button>
+          <button class="col-md-6 mx-auto select-button btn btn-success" (click)="select()">Select</button>
         </div> <!-- buttons -->
         </div>
       </div> <!-- file-explorer -->

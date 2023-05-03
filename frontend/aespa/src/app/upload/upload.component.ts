@@ -15,7 +15,7 @@ export class UploadComponent implements OnInit {
   apiUrl = 'http://localhost:8827/images/GetSubDirAndFiles'
   //TODO: add stack to keep track of previous folders
   private stack: string[] = [];
-  base_dir = "/app/uploads";
+  base_dir = "/";
   current_dir = this.base_dir;
   subDirectories: boolean = true;
 
@@ -39,7 +39,7 @@ export class UploadComponent implements OnInit {
       this.current_dir = this.base_dir;
       return;
     }
-      this.current_dir = this.base_dir + "/" + folder;
+      this.current_dir = this.base_dir + folder;
     }
 
   push(folder: string): void {
