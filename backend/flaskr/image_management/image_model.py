@@ -34,12 +34,10 @@ class Image:
   def get_iamges_with_tags(cls, dir_id: int):
     images_with_tags_dict = {}
 
+    conn = Connect().get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
     try:
-      conn = Connect().get_connection()
-
-      # Create cursor to perform database operations
-      cursor = conn.cursor(cursor_factory=RealDictCursor)
-
       # Insert new directory path
       query = f"""
         select
@@ -75,7 +73,6 @@ class Image:
       logging.error("Error:: Fetching images along with tags ==> ", e)
 
     finally:
-      # conn.close()
       cursor.close()
 
     return list(images_with_tags_dict.values())
@@ -125,7 +122,6 @@ class Image:
       # Add directory images into photo table
       if len(img_paths) > 0:
         for path in img_paths:
-          cursor = conn.cursor()
           insert_query = "insert into photo(photo_directory, photo_path) values(" + str(
               dir_id) + ", '" + str(path) + "')"
           cursor.execute(insert_query)
