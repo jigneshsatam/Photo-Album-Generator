@@ -4,6 +4,7 @@ import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router'
+import { window } from 'rxjs';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class LoadImagesComponent {
   ];
   getImageUrl = "http://localhost:8827/images/load?directory=uploads/"
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
-  addTagUrl = 'http://localhost:8827/tags/addTags'
+  addTagUrl = 'http://localhost:8827/tagging/tag-all-images'
   images: Image[] = [];
   uploadRecieved = false;
   dataRecieved = "";
@@ -88,14 +89,23 @@ export class LoadImagesComponent {
     const tags: any[] = [];
     if (this.heroForm.value.selectedTagIds.length) {
       this.heroForm.value.selectedTagIds.forEach((element: any) => {
-        tags.push(element.name)
+        tags.push({
+          "tag_id": element.id,
+          "name": element.name
+        })
       });
       const payload = {
-        tags
+        "dir_id": Number(this.dirID),
+        "tags": tags,
       }
+
+      console.log("payload ====> ", payload);
+
       this.http.post<any>(this.addTagUrl, payload).subscribe((data: any) => {
         alert('Tags Added');
-        this.heroForm.reset()
+        // this.heroForm.reset()
+        location.reload();
+
       }, error => this.heroForm.reset());
     } else {
       alert('no Tags Added');
