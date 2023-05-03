@@ -103,13 +103,16 @@ export class GuestLoadImagesComponent {
     console.log('payload ====> ', payload);
   
     this.http.post<any>(this.searchFilterUrl, payload).subscribe(
-      // (data: any) => {
-      // },
+      (response: any) => {
+        console.log('response ====> ', response);
+        this.images = response.images;
+      },
       (error) => {
         console.log('addTags error: ', error);
       }
     );
   }
+  
 
   selectAll() {
     this.heroForm.get('selectedTagIds').setValue(this.tags);
