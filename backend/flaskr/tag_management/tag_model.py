@@ -12,13 +12,14 @@ class Tag:
 
   def create_tag(tags):
     result = False
+
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
+
     try:
-      conn = Connect().get_connection()
-      cursor = conn.cursor()
       getTagsQuery = "SELECT tag FROM tag"  # executing in line 14
 
       # When new tag is added, it checks duplicates and SQL querying to database to get list of tags
-      cursor = conn.cursor()
       cursor.execute(getTagsQuery)
       # get all tag names in tagRows variable
       tagRows = cursor.fetchall()
@@ -56,23 +57,26 @@ class Tag:
                 VALUES %s" % batchData
         cursor.execute(sql)
       conn.commit()
-      cursor.close()
+
       result = True
+
     except Exception as e:
       logging.error(e)
       result = False
+
+    finally:
+      cursor.close()
 
     return result
 
   def get_tags():
     result = False
     tags = []
+
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
+
     try:
-      conn = Connect().get_connection()
-
-      # Create cursor to perform database operations
-      cursor = conn.cursor()
-
       query = "SELECT * FROM tag"
 
       cursor.execute(query)
@@ -84,12 +88,15 @@ class Tag:
 
        #     tags = cursor.fetchall()
 
-      conn.commit()
-      cursor.close()
+      conn.commit()      
 
       result = True
+
     except Exception as e:
       logging.error(e)
       result = False
+
+    finally:
+      cursor.close()
 
     return tags, result
