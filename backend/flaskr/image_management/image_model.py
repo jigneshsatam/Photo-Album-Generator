@@ -81,20 +81,16 @@ class Image:
     return list(images_with_tags_dict.values())
 
   def add_new_directory(user_id, dir_path):
-    # logging.warning('Start add new directory function')
     result = False
     dir_id = -1
 
-    try:
-      conn = Connect().get_connection()
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
 
-      # Create cursor to perform database operations
-      cursor = conn.cursor()
-
+    try:     
       # Insert new directory path
       query = "insert into imgdirectories(userid, dirpath) values(" + str(
           user_id) + ", '" + dir_path + "') returning id"
-      # logging.warning(query)
       cursor.execute(query)
 
       # Get id for new directory path
@@ -102,13 +98,14 @@ class Image:
 
       conn.commit()
 
-      # conn.close()
-      cursor.close()
-
       result = True
-    except Exception as e:
+
+    except Exception as e:      
       logging.error(e)
       result = False
+
+    finally:
+      cursor.close()
 
     return dir_id, result
 
@@ -116,16 +113,14 @@ class Image:
     result = False
     img_paths = []
 
-    try:
-      conn = Connect().get_connection()
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
 
+    try:     
       # Get images in directory path
       for img in os.scandir('uploads/' + dir_path):
         if img.name.endswith(".png") or img.name.endswith(".jpg") or img.name.endswith(".jpeg"):
           img_paths.append(img.path)
-
-      # if dir_path != "":
-      #   dir_path = dir_path + '/'
 
       # Add directory images into photo table
       if len(img_paths) > 0:
@@ -137,9 +132,11 @@ class Image:
           conn.commit()
 
       result = True
+
     except Exception as e:
       logging.error(e)
       result = False
+
     finally:
       cursor.close()
 
@@ -149,12 +146,10 @@ class Image:
     result = False
     albums = []
 
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
+
     try:
-      conn = Connect().get_connection()
-
-      # Create cursor to perform database operations
-      cursor = conn.cursor()
-
       query = "SELECT * FROM imgdirectories"
 
       cursor.execute(query)
@@ -165,50 +160,52 @@ class Image:
             "dirpath": row[2]
         })
 
-      conn.commit()
-      cursor.close()
+      conn.commit()      
 
       result = True
+
     except Exception as e:
       logging.error(e)
       result = False
+
+    finally:
+      cursor.close()
 
     return albums, result
 
   def delete_album(id: int):
     result = False
 
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
+
     try:
-      conn = Connect().get_connection()
-
-      # Create cursor to perform database operations
-      cursor = conn.cursor()
-
       cursor.execute("DELETE FROM imgdirectories WHERE id = %s", (id,))
 
-      conn.commit()
-      cursor.close()
+      conn.commit()      
 
       result = True
+
     except Exception as e:
       logging.error(e)
       result = False
 
+    finally:
+      cursor.close()
+
     return id, result
 
   def get_images_from_tags(user_id, tag_list):
+    result = []
+
+    conn = Connect().get_connection()
+    cursor = conn.cursor()
+
     try:
-      conn = Connect().get_connection()
-      result = []
-
-      # Create cursor to perform database operations
-      cursor = conn.cursor()
-
       # Insert new directory path
       tag_list_string = ', '.join(tag_list)
       query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from userinfo inner join imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(
           user_id)
-      # logging.warn(query)
       cursor.execute(query)
 
       # Store result in dictionary object
@@ -219,10 +216,12 @@ class Image:
             "directoryPath": row[2]
         })
 
-      conn.commit()
-      cursor.close()
+      conn.commit()      
 
     except Exception as e:
       logging.error(e)
+
+    finally:
+      cursor.close()
 
     return result
