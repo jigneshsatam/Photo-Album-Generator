@@ -51,7 +51,8 @@ class Image:
             tag
           on tagging.tag_id = tag.tag_id
         where
-          photo_directory = {dir_id};
+          photo_directory = {dir_id}
+        order by photo_id, tag.tag_id;
       """
       logging.debug(query)
       cursor.execute(query)
@@ -84,7 +85,7 @@ class Image:
     conn = Connect().get_connection()
     cursor = conn.cursor()
 
-    try:     
+    try:
       # Insert new directory path
       query = "insert into imgdirectories(userid, dirpath) values(" + str(
           user_id) + ", '" + dir_path + "') returning id"
@@ -97,7 +98,7 @@ class Image:
 
       result = True
 
-    except Exception as e:      
+    except Exception as e:
       logging.error(e)
       result = False
 
@@ -113,7 +114,7 @@ class Image:
     conn = Connect().get_connection()
     cursor = conn.cursor()
 
-    try:     
+    try:
       # Get images in directory path
       for img in os.scandir('uploads/' + dir_path):
         if img.name.endswith(".png") or img.name.endswith(".jpg") or img.name.endswith(".jpeg"):
@@ -156,7 +157,7 @@ class Image:
             "dirpath": row[2]
         })
 
-      conn.commit()      
+      conn.commit()
 
       result = True
 
@@ -178,7 +179,7 @@ class Image:
     try:
       cursor.execute("DELETE FROM imgdirectories WHERE id = %s", (id,))
 
-      conn.commit()      
+      conn.commit()
 
       result = True
 
@@ -212,7 +213,7 @@ class Image:
             "directoryPath": row[2]
         })
 
-      conn.commit()      
+      conn.commit()
 
     except Exception as e:
       logging.error(e)

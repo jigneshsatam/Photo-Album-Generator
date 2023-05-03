@@ -21,9 +21,11 @@ export class LoadImagesComponent {
   getImageUrl = "http://localhost:8827/images/load?directory=uploads/"
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
   addTagUrl = 'http://localhost:8827/tagging/tag-all-images'
+  deleteTagUrl = 'http://localhost:8827/tagging/delete-tag'
   images: Image[] = [];
   uploadRecieved = false;
   dataRecieved = "";
+  imgToLoad: number | null = null;
 
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router, private route: ActivatedRoute) { }
@@ -55,24 +57,42 @@ export class LoadImagesComponent {
   getImages() {
     var url = "";
     url = this.getImageUrl;
-    // if (!this.uploadRecieved) {
-    // }
-    // else {
-    //   // url = 'http://localhost:8827/images/load?directory=uploads/' + this.dataRecieved;
-    //   // console.log("url: ", url);
-    // }
+    if (this.imgToLoad == null) {
+      this.images = []
+    }
     this.http.get<any>(url)
-      .subscribe((data: any) => {
-        console.log(data);
-        data["images"].forEach((element: Image) => {
-          element["path"] = "assets/" + element.path;
-          this.images.push(element);
-        });
-
-      },
-        error => {
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          if (this.imgToLoad == null) {
+            data["images"].map((element: Image) => element["path"] = "assets/" + element.path)
+            this.images = data["images"];
+          } else {
+            var updatedImage: Image;
+            data["images"].forEach((element: Image) => {
+              if (element.photo_id == this.imgToLoad) {
+                updatedImage = element;
+              }
+            });
+            this.images.map((img: Image) => {
+              if (img.photo_id == this.imgToLoad) {
+                img = updatedImage;
+              }
+            })
+          }
+          // data["images"].forEach((element: Image) => {
+          //   if (this.imgToLoad == null) {
+          //     element["path"] = "assets/" + element.path;
+          //     this.images.push(element);
+          //   } else {
+          //     this.images
+          //   }
+          // });
+        },
+        error: (error) => {
           console.log("getImages error: ", error);
-        });
+        }
+      });
   }
 
   getTags() {
@@ -102,9 +122,9 @@ export class LoadImagesComponent {
       console.log("payload ====> ", payload);
 
       this.http.post<any>(this.addTagUrl, payload).subscribe((data: any) => {
-        alert('Tags Added');
-        // this.heroForm.reset()
-        location.reload();
+        // alert('Tags Added');
+        this.heroForm.reset();
+        this.getImages();
 
       }, error => this.heroForm.reset());
     } else {
@@ -127,5 +147,25 @@ export class LoadImagesComponent {
 
   onDone() {
     this.router.navigate(['../admin/']);
+  }
+
+  removeTag(img_id: number, tag_id: number) {
+    console.log("img_id", img_id, "tag_id", tag_id)
+    this.http.delete<any>(this.deleteTagUrl, {
+      body: {
+        "photo_id": String(img_id),
+        "tag_id": String(tag_id),
+      }
+    }).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.imgToLoad = img_id;
+        this.getImages();
+        this.imgToLoad = null;
+      },
+      error: (error) => {
+        console.log("getImages error: ", error);
+      }
+    });
   }
 }
