@@ -1,4 +1,5 @@
-<main role="main">
+<body class="bg-light">
+  <main role="main">
   <div class="album py-4 bg-light">
     <div class="container-xl">
  <!-- Beginning OF TAGs Dropdown -->
@@ -78,7 +79,13 @@
         </form>
       </div>
       <div class="p-2">
-       <button type="button" class="btn btn-primary" (click)="onDone()">Done</button>
+       <button type="button" class="btn btn-primary">Search</button>
+      </div>
+      <div class="p-2">
+        <input type="text" class="form-control me-2" placeholder="Enter Number of Images">
+      </div>
+      <div class="p-2">
+       <button type="button" class="btn btn-success" (click)="onDone()">Create Slideshow</button>
       </div> 
       </div>      
       </div>
