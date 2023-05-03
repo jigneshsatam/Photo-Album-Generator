@@ -1,11 +1,60 @@
+.up-component
+  height: 100vh
+  width: 100vw
+
+.select-dir
+  height: 300px
+  position: relative
+
 .upload-button
   margin-bottom: 1rem
+  position: relative
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
 
-.file-explorer
+.explorer-header
+  border: 1px solid gray
+  background-color: #f0f0f0
+  width: 100%
+  margin: 0 auto
   display: flex
-  flex-direction: column
+  justify-content: space-between
 
-.directory-tree, .files
+.current-url
+  border: 1px solid gray
+  background-color: #f0f0f0
+  width: 75%
+  height: 75%
+  margin: 0 auto
+  display: flex
+  justify-content: space-between
+  margin-top: 7px
+  padding-left: 7px
+  margin-right: 20px
+  margin-left: 20px
+  
+.file-explorer
+  display: block
+  flex-direction: column
+  border: 2px solid #ccc
+  border-radius: 5px
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
+  position: relative
+
+.directory-tree
+  gap: 16px
+  margin-top: 1rem
+  margin-bottom: 1rem
+  margin-left: 1rem
+  margin-right: 1rem
+  padding: 10px
+  border: 1px solid gray
+  background-color: #f0f0f0
+  height: 400px
+
+
+.files
   display: grid
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr))
   gap: 16px
@@ -19,6 +68,10 @@
   .folder img, .file img
   width: 50px
   height: 50px
+
+.select-button
+  margin-bottom: 1rem
+
 
 .buttons
   display: flex
