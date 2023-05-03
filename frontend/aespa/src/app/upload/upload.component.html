@@ -1,10 +1,10 @@
-<div class="p-3 mb-2 bg-light text-dark">
-  <div class="container bg-faded">
+<div class="p-3 mb-2 bg-light text-dark up-component">
+  <div class="container bg-faded select-dir">
     <div class="row justify-content-between align-items-center">
       <div class="col-md-7">
         <h1 class="text-end">Select Directory</h1>
       </div>
-      <div class="col-md-12">
+      <div *ngIf="!showFileExplorer" class="col-md-12">
         <br/>
         <h5>
           The images from the selected directory will be used for tagging.
@@ -15,29 +15,26 @@
   </div>
   <div>
     <div class="row  justify-content-between align-items-center">
-      <div class="col-md-7">
-        <button *ngIf="!showFileExplorer" (click)="toggleFileExplorer()"type="button" class="btn btn-primary upload-button">Select directory</button>
-        <button *ngIf="showFileExplorer" (click)="toggleFileExplorer()"type="button" class="btn btn-danger upload-button">Cancel</button>
-      </div>
-
+      <div class="col-md-7 mx-auto">
+        <button *ngIf="!showFileExplorer" (click)="toggleFileExplorer()"type="button" class="select-dir" class="btn btn-primary upload-button">Select directory</button>
+        
       <div *ngIf="showFileExplorer" class="file-explorer">
+        <div class="explorer-header">
+          <button class="btn button btn-secondary">Back</button>
+        <header class="current-url">{{ current_dir }}</header>
+        <button *ngIf="showFileExplorer" (click)="toggleFileExplorer()"type="button" class="btn btn-danger">X</button>
+        </div>
           <div class="directory-tree">
               <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder')" (dblclick)="onDoubleClick(folder, 'folder')">
                 <img class="folder" src="assets/folder.png" alt="folder icon" />
                 <span>{{ folder }}</span>
               </div>
             </div>
-            <div class="files">
-              <div *ngFor="let file of files" (click)="selectItem(file, 'file')">
-                <img class="file" src="assets/file.png" alt="file icon" />
-                <span>{{ file }}</span>
-              </div>
-            </div>
         <div class="buttons">
-          <button (click)="select()">Select</button>
-          <button (click)="cancel()">Cancel</button>
+          <button class="col-md-6 mx-auto select-button btn btn-success" (click)="select()">Select</button>
+        </div> <!-- buttons -->
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+      </div> <!-- file-explorer -->
+    </div> <!-- row -->
+  </div> <!-- container -->
+</div> <!-- up-component -->

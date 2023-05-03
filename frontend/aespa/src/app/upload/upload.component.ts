@@ -14,6 +14,7 @@ export class UploadComponent implements OnInit {
   files = ['file1.txt', 'file2.txt', 'file3.txt'];
   apiUrl = 'http://localhost:8827/images/GetSubDirAndFiles'
   //TODO: add stack to keep track of previous folders
+  current_dir = "/current_dir/";
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
 
