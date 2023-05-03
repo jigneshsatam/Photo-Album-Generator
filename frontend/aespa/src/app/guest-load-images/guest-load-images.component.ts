@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router'
 
 @Component({
   selector: 'app-load-images',
@@ -14,13 +15,16 @@ export class GuestLoadImagesComponent {
   heroForm: any;
   tags: any[] = [
   ];
-  apiUrl = 'http://localhost:8827/images/load?directory=uploads/images';
+  getImageUrl = "http://localhost:8827/images/load?directory=uploads/";
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
+  searchFilterUrl = 'http://localhost:8827/images/FetchImagesFromTags';
   images: Image[] = [];
+  imgToLoad: number | null = null;
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) { }
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.getImageUrl = `http://localhost:8827/images/load`;
     this.getImages();
     this.getTags();
     this.heroForm = this.fb.group({
@@ -29,17 +33,44 @@ export class GuestLoadImagesComponent {
   }
 
   getImages() {
-    this.http.get<any>(this.apiUrl)
-      .subscribe((data: any) => {
-        data["images"].forEach((element: Image) => {
-          element["path"] = "assets/" + element.path;
-          this.images.push(element);
-        });
-
-      },
-        error => {
+    var url = "";
+    url = this.getImageUrl;
+    if (this.imgToLoad == null) {
+      this.images = []
+    }
+    this.http.get<any>(url)
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          if (this.imgToLoad == null) {
+            data["images"].map((element: Image) => element["path"] = "assets/" + element.path)
+            this.images = data["images"];
+          } else {
+            var updatedImage: Image;
+            data["images"].forEach((element: Image) => {
+              if (element.photo_id == this.imgToLoad) {
+                updatedImage = element;
+              }
+            });
+            this.images.map((img: Image) => {
+              if (img.photo_id == this.imgToLoad) {
+                img = updatedImage;
+              }
+            })
+          }
+          // data["images"].forEach((element: Image) => {
+          //   if (this.imgToLoad == null) {
+          //     element["path"] = "assets/" + element.path;
+          //     this.images.push(element);
+          //   } else {
+          //     this.images
+          //   }
+          // });
+        },
+        error: (error) => {
           console.log("getImages error: ", error);
-        });
+        }
+      });
   }
 
   getTags() {
@@ -50,6 +81,34 @@ export class GuestLoadImagesComponent {
         error => {
           console.log("getImages error: ", error);
         });
+  }
+
+  searchFilter() {
+    const numOfImgs = Number((<HTMLInputElement>document.getElementById("num-of-images")).value);
+    if (!numOfImgs) {
+      alert('Enter a Number of Photos');
+      return;
+    }
+  
+    if (this.heroForm.value.selectedTagIds.length === 0) {
+      alert('Enter Tags in the Search Bar');
+      return;
+    }
+  
+    const payload = {
+      "userId": 1,
+      "tags": this.heroForm.value.selectedTagIds.map((tag: any) => tag.id),
+      "numOfImgs": numOfImgs
+    };
+    console.log('payload ====> ', payload);
+  
+    this.http.post<any>(this.searchFilterUrl, payload).subscribe(
+      // (data: any) => {
+      // },
+      (error) => {
+        console.log('addTags error: ', error);
+      }
+    );
   }
 
   selectAll() {
@@ -68,4 +127,5 @@ export class GuestLoadImagesComponent {
   onDone() {
     this.router.navigate(['../guest/slideshow/']);
   }
+
 }

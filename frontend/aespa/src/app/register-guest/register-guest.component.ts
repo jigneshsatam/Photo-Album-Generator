@@ -27,7 +27,7 @@ export class GuestRegisterComponent {
       lName: ['', Validators.required],
       userName: ['', Validators.required],
       pwd: ['', [Validators.required]],
-      userType: ['guest', [Validators.required]]
+      adminId: [1, [Validators.required]]
     });
   }
 

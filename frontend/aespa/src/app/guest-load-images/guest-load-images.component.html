@@ -79,11 +79,10 @@
         </form>
       </div>
       <div class="p-2">
-       <button type="button" class="btn btn-primary">Search</button>
-      </div>
+        <input id="num-of-images" type="text" class="form-control me-2" placeholder="Enter Number of Photos" pattern="[0-10000]*">      </div>
       <div class="p-2">
-        <input type="text" class="form-control me-2" placeholder="Enter Number of Images">
-      </div>
+        <button (click)="searchFilter()" type="button" class="btn btn-primary">Search</button>
+       </div>
       <div class="p-2">
        <button type="button" class="btn btn-success" (click)="onDone()">Create Slideshow</button>
       </div> 
@@ -102,7 +101,7 @@
                 <button type="button"
                   class="btn btn-primary position-relative rounded-pill text-wrap text-break btn-block"
                   *ngFor="let tag of img.tags">
-                  {{tag}}
+                  {{tag.name}}
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     X
                     <span class="visually-hidden">unread messages</span>
