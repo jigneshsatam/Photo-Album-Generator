@@ -207,11 +207,12 @@ class Image:
 
       # Store result in dictionary object
       for row in cursor.fetchall():
-        result.append({
+        if not any(d['imageId'] == row[0] for d in result):
+          result.append({
             "imageId": row[0],
             "imagePath": row[1],
             "directoryPath": row[2]
-        })
+          })
 
       conn.commit()
 
