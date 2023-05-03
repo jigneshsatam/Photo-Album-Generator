@@ -1,0 +1,7 @@
+flask==2.2.3
+redis
+flask_cors
+psycopg2-binary
+flask_sqlalchemy
+flask_sqlalchemy_session
+jwt

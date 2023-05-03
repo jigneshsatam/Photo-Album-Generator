@@ -1,0 +1,96 @@
+name: photo-album-generator
+version: "3.9"
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: photogendocker
+      POSTGRES_PASSWORD: photogendocker
+      POSTGRES_DB: photogen
+      Postgres_DB_Connection_String: 'postgresql://photogendocker:photogendocker@database:5432/photogen'
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./postgres-sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+    networks:
+      - photo_album_generator_nw
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "test123!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - database
+    networks:
+      - photo_album_generator_nw
+
+  backend:
+    # image: jigneshsatam/backend:latest
+    build: backend/.
+    volumes:
+      - ./Photo-Generator-Pictures:/app/uploads
+      - ./backend:/app
+    environment:
+      FLASK_DEBUG: "true"
+    networks:
+      - photo_album_generator_nw
+    depends_on:
+      - database
+      - cache
+    restart: always
+    links:
+      - database:database
+
+  frontend:
+    image: jigneshsatam/frontend:latest
+    build: frontend
+    volumes:
+      - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
+      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+    ports:
+      - "4200:80"
+    networks:
+      - photo_album_generator_nw
+
+  frontend-dev:
+    # image: jigneshsatam/frontend-dev:latest
+    build:
+      context: frontend
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./frontend/aespa:/app
+      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+    ports:
+      - "4300:4200"
+    networks:
+      - photo_album_generator_nw
+    command: npm start
+
+  cache:
+    image: "redis:alpine"
+    networks:
+      - photo_album_generator_nw
+
+  loadbalancer:
+    image: jigneshsatam/loadbalancer:latest
+    build: loadbalancer/.
+    depends_on:
+      - backend
+    ports:
+      - "8827:4000"
+    networks:
+      - photo_album_generator_nw
+
+networks:
+  photo_album_generator_nw:
+
+    # test-script:
+    #   build: test-script/ubuntu/.
+    #   container_name: test-script
+    #   volumes:
+    #     - ./:/app

@@ -1,0 +1,22 @@
+<button *ngIf="!showFileExplorer" (click)="toggleFileExplorer()"type="button" class="btn btn-primary upload-button">Upload</button>
+<button *ngIf="showFileExplorer" (click)="toggleFileExplorer()"type="button" class="btn btn-danger upload-button">Cancel</button>
+
+
+<div *ngIf="showFileExplorer" class="file-explorer">
+    <div class="directory-tree">
+        <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder')" (dblclick)="onDoubleClick(folder, 'folder')">
+          <img class="folder" src="assets/folder.png" alt="folder icon" />
+          <span>{{ folder }}</span>
+        </div>
+      </div>
+      <div class="files">
+        <div *ngFor="let file of files" (click)="selectItem(file, 'file')">
+          <img class="file" src="assets/file.png" alt="file icon" />
+          <span>{{ file }}</span>
+        </div>
+      </div>
+  <div class="buttons">
+    <button (click)="select()">Select</button>
+    <button (click)="cancel()">Cancel</button>
+  </div>
+</div>
