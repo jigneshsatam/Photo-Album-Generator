@@ -26,11 +26,11 @@ class Taging:
         tag_with_ids = []
         tagging_ids=[]
 
-
+        conne = Connect().get_connection()
+        cursor = conne.cursor()
 
         try:
-            conne = Connect().get_connection()
-            cursor = conne.cursor()
+
             #Check for existing tags in datbase compare to what request is sending
             # get all the names a.k.a string values from request
             for t in tag:
@@ -99,7 +99,7 @@ class Taging:
             print(f'Addition of tag: failed')
 
         finally:
-            cursor.close
+            cursor.close()
 
         return tagging_ids
 
@@ -108,9 +108,9 @@ class Taging:
     def get_taged_img(cs, tag_id, img_id):
 
         tagged_query = f'SELECT tag_id, img_id FROM tagging WHERE tag_id = {tag_id} AND img_id = {img_id};'
-
+        conn = Connect().get_connection()
         try:
-            conn = Connect().get_connection()
+
 
             # Create cursor to perform database operations
             cursor = conn.cursor()
@@ -125,8 +125,8 @@ class Taging:
                 tagging.append({"tag_id" : row[0],
                                   "img_id": row[1]
                                   })
-            cursor.close()
-            return tagging
+
+
 
 
         except Exception as e:
@@ -136,6 +136,7 @@ class Taging:
         # return query_df
         finally:
             cursor.close()
+        return tagging
 
     # tag all images in a directory
     @classmethod
@@ -155,11 +156,12 @@ class Taging:
         tag_names = []
 
         tagging_ids= []
+        conn = Connect().get_connection()
+        cursor = conn.cursor()
 
         try:
             # Create cursor to perform database operations
-            conn = Connect().get_connection()
-            cursor = conn.cursor()
+
 
             #get the string portion of the tag {'name': 'string'}
             for tag in tags:
@@ -254,7 +256,7 @@ class Taging:
             print(f"no image:{dir_id} with tag:{tags} ")
 
         finally:
-            cursor.close
+            cursor.close()
 
         return tagging_ids
 
@@ -263,12 +265,12 @@ class Taging:
     def delete_tags(cs, tag_id, img_id):
        del_query = f'DELETE FROM tagging WHERE tag_id= {tag_id} AND img_id = {img_id};'
 
-
+       conn = Connect().get_connection()
+       cursor = conn.cursor()
        try:
            success = False
 
-           conn = Connect().get_connection()
-           cursor = conn.cursor()
+
            cursor.execute(del_query)
            conn.commit()
            print('Tag Deleted')
