@@ -2,6 +2,7 @@ import json
 import os
 import errno
 import logging
+import random
 
 from flask import Blueprint, Response, jsonify, request, make_response
 
@@ -153,7 +154,22 @@ def fetch_images_from_tags():
   for tag in request_data["tags"]:
     tag_list.append(str(tag))
 
+  # Get number of images to output from request
+  if str(request.json.get('numOfImgs')) != 'None':
+    try:
+      num_of_imgs = int(request.json.get('numOfImgs'))
+    except:
+      return jsonify({'status': 'given number of images is not an integer'}), 400
+  else:
+    num_of_imgs = -1
+
   # Get images from tag list
   result_imgs = Image.get_images_from_tags(user_id, tag_list)
+
+  # Randomize and filter by number of images given
+  if num_of_imgs != -1:
+    random.shuffle(result_imgs)
+    N = num_of_imgs
+    result_imgs = result_imgs[:N]    
 
   return jsonify({"images": result_imgs})
