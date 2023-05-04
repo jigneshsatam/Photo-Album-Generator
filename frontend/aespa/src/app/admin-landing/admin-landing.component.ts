@@ -55,6 +55,7 @@ export class AdminLandingComponent {
     this.router.navigate(['../register-guest']);
   }
 
+  
   onSlideshow() {
     this.router.navigate(['../guest/load-images']);
   }
