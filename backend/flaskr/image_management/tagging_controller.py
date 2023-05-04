@@ -29,6 +29,11 @@ def tag_image():
   if not request.data:
     return jsonify({'request': 'No JSON data provided'}), 404
 
+  if request.json.get('dir_id') == None:
+    return jsonify({'request': 'No dir_id is provided'}), 400
+
+  dir_id = request.json.get('dir_id')
+
   if str(request.json.get('photo_id') != 'None'):
     try:
       photo_id = int(request.json.get('photo_id'))
@@ -42,7 +47,8 @@ def tag_image():
 
   tags = request.json.get('tags')
 
-  temp_tag_ids = Taging.tag_image(photo_id, tags)
+  # temp_tag_ids = Taging.tag_image(photo_id, tags)
+  temp_tag_ids = Taging.tag_all_images(dir_id, tags, photo_id)
 
   return jsonify({'tag_ids:': temp_tag_ids}), 200
   # if str(request.json.get('photo_id') != None):
