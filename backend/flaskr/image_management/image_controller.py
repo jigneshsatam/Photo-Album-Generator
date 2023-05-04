@@ -170,6 +170,6 @@ def fetch_images_from_tags():
   if num_of_imgs != -1:
     random.shuffle(result_imgs)
     N = num_of_imgs
-    result_imgs = result_imgs[:N]    
+    result_imgs = result_imgs[:N]
 
   return jsonify({"images": result_imgs})

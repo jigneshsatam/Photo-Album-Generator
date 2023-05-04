@@ -193,41 +193,89 @@ class Image:
     return id, result
 
   def get_images_from_tags(user_id, tag_list):
-    result = []
 
     conn = Connect().get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
 
     try:
       # Insert new directory path
       tag_list_string = ', '.join(tag_list)
-      query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from userinfo inner join imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(
-          user_id)
+
+      # tag_list_string = ""
+      # for tag_id in tag_list:
+      #   tag_list_string += f' tagging.tag_id = {tag_id} AND '
+      # tag_list_string = tag_list_string.rstrip("AND ")
+
+      query = f"""
+        select
+          tagging.img_id as img_id, photo.photo_path as photo_path, tag.tag_id as tag_id, tag.tag as name
+        from
+            tag
+          left join
+            tagging
+          on tagging.tag_id = tag.tag_id
+          left join
+            photo
+          on tagging.img_id = photo.photo_id
+          left join
+            imgdirectories
+          on photo.photo_directory = imgdirectories.id
+        where
+          imgdirectories.userid = {user_id}
+        AND
+          tagging.img_id IN (
+          SELECT img_id
+          FROM tagging
+          WHERE tagging.tag_id IN ({tag_list_string})
+          GROUP BY tagging.img_id
+          HAVING COUNT(DISTINCT tag_id) = {len(tag_list)}
+        );
+
+      """
+
+      # query = "select tagging.img_id, photo.photo_path, imgdirectories.dirpath from  imgdirectories on imgdirectories.userid = userinfo.id inner join photo on photo.photo_directory = imgdirectories.id inner join tagging on tagging.img_id = photo.photo_id where tagging.tag_id in (" + tag_list_string + ") and userinfo.id = " + str(
+      #     user_id)
+      print(query)
       cursor.execute(query)
 
-      # Store result in dictionary object
-      for row in cursor.fetchall():
-        if not any(d['imageId'] == row[0] for d in result):
-          result.append({
-            "imageId": row[0],
-            "imagePath": row[1],
-            "directoryPath": row[2]
-          })
+      images_with_tags_dict = {}
 
-      conn.commit()
-      
-      # Get tags for each image in image list
-      for dictionary in result:
-        tags = []
-        tags_query = "select tag.tag_id, tag.tag from tag inner join tagging on tagging.tag_id = tag.tag_id where tagging.img_id = " + str(dictionary['imageId'])
-        cursor.execute(tags_query)
+      # Store result in dictionary object
+      if cursor.pgresult_ptr is not None:
         for row in cursor.fetchall():
-          tags.append({
-            "tag_id": row[0],
-            "name": row[1]
-          })
-        conn.commit()
-        dictionary.update({"tags": tags})      
+          img_obj = images_with_tags_dict.get(
+              row["img_id"],
+              {"imageId": row["img_id"], "imagePath": row["photo_path"], "tags": []})
+          if row["tag_id"] is not None:
+            tag = {"tag_id": row["tag_id"], "name": row["name"]}
+            tags = img_obj.get("tags")
+            tags.append(tag)
+            img_obj["tags"] = tags
+          images_with_tags_dict[row["img_id"]] = img_obj
+
+      # for row in cursor.fetchall():
+      #   if not any(d['imageId'] == row[0] for d in result):
+      #     result.append({
+      #         "imageId": row[0],
+      #         "imagePath": row[1],
+      #         "directoryPath": row[2]
+      #     })
+
+      # conn.commit()
+
+      # # Get tags for each image in image list
+      # for dictionary in result:
+      #   tags = []
+      #   tags_query = "select tag.tag_id, tag.tag from tag inner join tagging on tagging.tag_id = tag.tag_id where tagging.img_id = " + \
+      #       str(dictionary['imageId'])
+      #   cursor.execute(tags_query)
+      #   for row in cursor.fetchall():
+      #     tags.append({
+      #         "tag_id": row[0],
+      #         "name": row[1]
+      #     })
+      #   conn.commit()
+      #   dictionary.update({"tags": tags})
 
     except Exception as e:
       logging.error(e)
@@ -235,4 +283,4 @@ class Image:
     finally:
       cursor.close()
 
-    return result
+    return list(images_with_tags_dict.values())
