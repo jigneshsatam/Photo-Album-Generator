@@ -154,7 +154,7 @@ export class LoadImagesComponent {
       this.http.post<any>(this.addTagToImageUrl, payload).subscribe({
         next: (data: any) => {
           // alert('Tags Added');
-          this.heroForm.reset();
+          // this.heroForm.reset();
           this.imgToLoad = img_id;
           this.getImages();
           this.imgToLoad = null;
