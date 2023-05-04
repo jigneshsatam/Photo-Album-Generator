@@ -1,9 +1,9 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Image } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router'
+import { Image } from './image';
 
 @Component({
   selector: 'app-load-images',
@@ -25,52 +25,10 @@ export class GuestLoadImagesComponent {
 
   ngOnInit() {
     this.getImageUrl = `http://localhost:8827/images/load`;
-    this.getImages();
     this.getTags();
     this.heroForm = this.fb.group({
       selectedTagIds: [],
     });
-  }
-
-  getImages() {
-    var url = "";
-    url = this.getImageUrl;
-    if (this.imgToLoad == null) {
-      this.images = []
-    }
-    this.http.get<any>(url)
-      .subscribe({
-        next: (data) => {
-          console.log(data);
-          if (this.imgToLoad == null) {
-            data["images"].map((element: Image) => element["path"] = "assets/" + element.path)
-            this.images = data["images"];
-          } else {
-            var updatedImage: Image;
-            data["images"].forEach((element: Image) => {
-              if (element.photo_id == this.imgToLoad) {
-                updatedImage = element;
-              }
-            });
-            this.images.map((img: Image) => {
-              if (img.photo_id == this.imgToLoad) {
-                img = updatedImage;
-              }
-            })
-          }
-          // data["images"].forEach((element: Image) => {
-          //   if (this.imgToLoad == null) {
-          //     element["path"] = "assets/" + element.path;
-          //     this.images.push(element);
-          //   } else {
-          //     this.images
-          //   }
-          // });
-        },
-        error: (error) => {
-          console.log("getImages error: ", error);
-        }
-      });
   }
 
   getTags() {
@@ -103,9 +61,13 @@ export class GuestLoadImagesComponent {
     console.log('payload ====> ', payload);
   
     this.http.post<any>(this.searchFilterUrl, payload).subscribe(
-      (response: any) => {
-        console.log('response ====> ', response);
-        this.images = response.images;
+      (data: any) => {
+        console.log('response ====> ', data);
+    //  this.images = response.images;
+        data["images"].forEach((element: Image) => {
+          element["imagePath"] = "assets/" + element.imagePath
+        }) 
+        this.images = data["images"];
       },
       (error) => {
         console.log('addTags error: ', error);

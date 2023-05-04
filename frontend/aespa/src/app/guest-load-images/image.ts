@@ -1,7 +1,8 @@
 export interface Image {
-  path: string;
-  photo_id: number;
   tags: Tag[];
+  directoryPath: string;
+  imageId: number;
+  imagePath: string;
 }
 
 export interface Tag {
