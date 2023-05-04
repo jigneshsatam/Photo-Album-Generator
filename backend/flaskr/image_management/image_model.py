@@ -215,6 +215,19 @@ class Image:
           })
 
       conn.commit()
+      
+      # Get tags for each image in image list
+      for dictionary in result:
+        tags = []
+        tags_query = "select tag.tag_id, tag.tag from tag inner join tagging on tagging.tag_id = tag.tag_id where tagging.img_id = " + str(dictionary['imageId'])
+        cursor.execute(tags_query)
+        for row in cursor.fetchall():
+          tags.append({
+            "tag_id": row[0],
+            "name": row[1]
+          })
+        conn.commit()
+        dictionary.update({"tags": tags})      
 
     except Exception as e:
       logging.error(e)
