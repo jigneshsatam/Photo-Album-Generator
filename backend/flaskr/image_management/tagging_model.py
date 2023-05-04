@@ -130,7 +130,7 @@ class Taging:
 
   # tag all images in a directory
   @classmethod
-  def tag_all_images(cs, dir_id, tags):
+  def tag_all_images(cs, dir_id, tags, photo_id=None):
     img_ids = []
     tag_ids = []
 
@@ -202,14 +202,16 @@ class Taging:
       # ============== Tags ======================
 
       # ============== Images Start ======================
-
-      print(img_ids_query)
-      cursor.execute(img_ids_query)
       img_ids = []
-      # cursor.execute(query)
-      if cursor.pgresult_ptr is not None:
-        for row in cursor.fetchall():
-          img_ids.append(row[0])
+      if photo_id == None:
+        print(img_ids_query)
+        cursor.execute(img_ids_query)
+        # cursor.execute(query)
+        if cursor.pgresult_ptr is not None:
+          for row in cursor.fetchall():
+            img_ids.append(row[0])
+      else:
+        img_ids = [photo_id]
 
       # return img_ids
       # ============== Images ======================

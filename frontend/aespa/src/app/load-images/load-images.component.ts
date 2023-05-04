@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Image } from "./image";
+import { Image, Tag } from "./image";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router'
@@ -21,6 +21,7 @@ export class LoadImagesComponent {
   getImageUrl = "http://localhost:8827/images/load?directory=uploads/"
   getTagUrl = 'http://localhost:8827/tags/fetchTags';
   addTagUrl = 'http://localhost:8827/tagging/tag-all-images'
+  addTagToImageUrl = 'http://localhost:8827/tagging/tag-image'
   deleteTagUrl = 'http://localhost:8827/tagging/delete-tag'
   images: Image[] = [];
   uploadRecieved = false;
@@ -127,6 +128,39 @@ export class LoadImagesComponent {
         this.getImages();
 
       }, error => this.heroForm.reset());
+    } else {
+      alert('no Tags Added');
+    }
+  }
+
+
+  addTagToImage(img_id: number) {
+    const tags: Tag[] = [];
+    if (this.heroForm.value.selectedTagIds.length) {
+      this.heroForm.value.selectedTagIds.forEach((element: any) => {
+        tags.push({
+          "tag_id": element.id,
+          "name": element.name
+        })
+      });
+      const payload = {
+        "dir_id": Number(this.dirID),
+        "tags": tags,
+        "photo_id": String(img_id),
+      }
+
+      console.log("payload ====> ", payload);
+
+      this.http.post<any>(this.addTagToImageUrl, payload).subscribe({
+        next: (data: any) => {
+          // alert('Tags Added');
+          this.heroForm.reset();
+          this.imgToLoad = img_id;
+          this.getImages();
+          this.imgToLoad = null;
+        },
+        error: (error) => this.heroForm.reset()
+      });
     } else {
       alert('no Tags Added');
     }
