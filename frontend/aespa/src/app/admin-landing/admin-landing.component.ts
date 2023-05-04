@@ -28,9 +28,9 @@ export class AdminLandingComponent {
         this.albums = data["albums"];
         this.isLoading = false;
       },
-      error => {
-        console.log("getAlbums error: ", error);
-      });
+        error => {
+          console.log("getAlbums error: ", error);
+        });
   }
 
   onDelete(album: any) {
@@ -42,9 +42,9 @@ export class AdminLandingComponent {
       .subscribe((data: any) => {
         this.getAlbums();
       },
-      error => {
-        console.log("deleteAlbum error: ", error);
-      }); 
+        error => {
+          console.log("deleteAlbum error: ", error);
+        });
   }
 
   onNewDirectory() {
@@ -56,14 +56,12 @@ export class AdminLandingComponent {
   }
 
   onSlideshow() {
-    this.router.navigate(['../guest/slideshow']);
+    this.router.navigate(['../guest/load-images']);
   }
 
   onLoadImages(album: any) {
     const id = album.id;
     this.router.navigate([`/admin/${id}/load-images`]);
   }
-  
+
 }
-
-

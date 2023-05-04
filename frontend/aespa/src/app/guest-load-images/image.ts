@@ -1,6 +1,5 @@
 export interface Image {
   tags: Tag[];
-  directoryPath: string;
   imageId: number;
   imagePath: string;
 }
