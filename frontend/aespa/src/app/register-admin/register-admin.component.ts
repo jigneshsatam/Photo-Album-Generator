@@ -27,7 +27,6 @@ export class AdminRegisterComponent {
       lName: ['', Validators.required],
       userName: ['', Validators.required],
       pwd: ['', [Validators.required]],
-      userType: ['admin', [Validators.required]]
     });
   }
 
@@ -46,7 +45,7 @@ export class AdminRegisterComponent {
     this.http.post<any>(this.apiUrl, this.form.value)
       .subscribe((data: any) => {
         this.loading = false; 
-        this.router.navigate(['../admin'], { relativeTo: this.route });
+        this.router.navigate(['../login'], { relativeTo: this.route });
       },
       error => {
         console.log("Register error: ", error);

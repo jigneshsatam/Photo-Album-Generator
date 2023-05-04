@@ -55,6 +55,10 @@ export class AdminLandingComponent {
     this.router.navigate(['../register-guest']);
   }
 
+  onSlideshow() {
+    this.router.navigate(['../guest/slideshow']);
+  }
+
   onLoadImages(album: any) {
     const id = album.id;
     this.router.navigate([`/admin/${id}/load-images`]);
