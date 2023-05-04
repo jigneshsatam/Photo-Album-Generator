@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { ActivatedRoute } from '@angular/router'
 import { Image } from './image';
 
@@ -75,7 +75,6 @@ export class GuestLoadImagesComponent {
     );
   }
   
-
   selectAll() {
     this.heroForm.get('selectedTagIds').setValue(this.tags);
   }
@@ -90,7 +89,16 @@ export class GuestLoadImagesComponent {
   };
 
   onDone() {
-    this.router.navigate(['../guest/slideshow/']);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        images: this.images.map((image: Image) => {
+          return {
+            imagePath: image.imagePath,
+            imageId: image.imageId
+          };
+        })
+      }
+    };
+    this.router.navigate(['../guest/slideshow/'], navigationExtras);
   }
-
 }

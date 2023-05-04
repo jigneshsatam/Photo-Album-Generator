@@ -1,8 +1,9 @@
-<p>slideshow works!</p>
+<div id = "blackbackground" style = "background-color: black; min-height: 100vh">
+<br>
 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
       <div *ngFor="let image of images; let i = index" class="carousel-item" [ngClass]="{'active': i === 0}">
-        <img [src]="image.url" class="d-block w-100" [alt]="image.alt">
+        <img [src]="image.imagePath" class="d-block w-100" [alt]="image.alt">
       </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -14,3 +15,4 @@
       <span class="visually-hidden">Next</span>
     </button>
   </div>
+</div>
