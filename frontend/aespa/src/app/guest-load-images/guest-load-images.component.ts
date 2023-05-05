@@ -43,8 +43,8 @@ export class GuestLoadImagesComponent {
 
   searchFilter() {
     const numOfImgs = Number((<HTMLInputElement>document.getElementById("num-of-images")).value);
-    if (!numOfImgs) {
-      alert('Enter a Number of Photos');
+    if (numOfImgs <= 0) {
+      alert('Enter a Valid Number of Photos');
       return;
     }
 
@@ -100,7 +100,7 @@ export class GuestLoadImagesComponent {
           })
         }
       };
-      this.router.navigate(['../guest/slideshow/'], navigationExtras);
+      this.router.navigate(['../admin/slideshow/'], navigationExtras);
     } else {
       alert("No images to create slideshow.")
     }
