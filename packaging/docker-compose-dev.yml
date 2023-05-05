@@ -34,7 +34,7 @@ services:
     networks:
       - photo_album_generator_nw
     depends_on:
-      # - database
+      - database
       - cache
 
   frontend:
@@ -47,6 +47,10 @@ services:
       - "4200:80"
     networks:
       - photo_album_generator_nw
+    depends_on:
+      - database
+      - backend
+      - loadbalancer
 
   cache:
     image: "redis:alpine"
@@ -59,6 +63,7 @@ services:
     # volumes:
     # - ./loadbalancer/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
+      - database
       - backend
     ports:
       - "8827:4000"
