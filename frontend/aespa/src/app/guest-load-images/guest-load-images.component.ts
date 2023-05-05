@@ -47,26 +47,26 @@ export class GuestLoadImagesComponent {
       alert('Enter a Valid Number of Photos');
       return;
     }
-  
+
     if (this.heroForm.value.selectedTagIds.length === 0) {
       alert('Enter Tags in the Search Bar');
       return;
     }
-  
+
     const payload = {
       "userId": 1,
       "tags": this.heroForm.value.selectedTagIds.map((tag: any) => tag.id),
       "numOfImgs": numOfImgs
     };
     console.log('payload ====> ', payload);
-  
+
     this.http.post<any>(this.searchFilterUrl, payload).subscribe(
       (data: any) => {
         console.log('response ====> ', data);
-    //  this.images = response.images;
+        //  this.images = response.images;
         data["images"].forEach((element: Image) => {
           element["imagePath"] = "assets/" + element.imagePath
-        }) 
+        })
         this.images = data["images"];
       },
       (error) => {
@@ -74,7 +74,7 @@ export class GuestLoadImagesComponent {
       }
     );
   }
-  
+
   selectAll() {
     this.heroForm.get('selectedTagIds').setValue(this.tags);
   }
@@ -89,16 +89,20 @@ export class GuestLoadImagesComponent {
   };
 
   onDone() {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        images: this.images.map((image: Image) => {
-          return {
-            imagePath: image.imagePath,
-            imageId: image.imageId
-          };
-        })
-      }
-    };
-    this.router.navigate(['../admin/slideshow/'], navigationExtras);
+    if (this.images.length > 0) {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          images: this.images.map((image: Image) => {
+            return {
+              imagePath: image.imagePath,
+              imageId: image.imageId
+            };
+          })
+        }
+      };
+      this.router.navigate(['../admin/slideshow/'], navigationExtras);
+    } else {
+      alert("No images to create slideshow.")
+    }
   }
 }

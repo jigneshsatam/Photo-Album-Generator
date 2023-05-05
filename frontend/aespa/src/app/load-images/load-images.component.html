@@ -91,8 +91,9 @@
       <div class="row gy-4">
         <div class="col-md-4" *ngFor="let img of images">
           <div class="card h-100 md-4 box-shadow">
-            <img [src]="img.path" class="card-img-top h-100" (click)="addTagToImage(img.photo_id)" title="Click to add tag(s)" />
-            <input type="hidden" value={{img.photo_id}}/>
+            <div class="d-flex justify-content-center h-200px">
+              <img [src]="img.path" class="card-img-top img-responsive img-thumbnail" (click)="addTagToImage(img.photo_id)" title="Click to add tag(s)" />
+            </div>
             <div class="card-body d-grid gap-2 d-md-block">
 
               <div class="d-flex mb-3 gap-3 flex-wrap justify-content-evenly">

@@ -9,3 +9,7 @@
 .card-img-top {
   cursor: pointer;
 }
+
+.h-200px {
+  height: 360px;
+}
