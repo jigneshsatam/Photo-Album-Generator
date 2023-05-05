@@ -99,6 +99,6 @@ export class GuestLoadImagesComponent {
         })
       }
     };
-    this.router.navigate(['../guest/slideshow/'], navigationExtras);
+    this.router.navigate(['../admin/slideshow/'], navigationExtras);
   }
 }

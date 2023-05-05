@@ -19,10 +19,10 @@ const routes: Routes = [
   { path: 'admin', component: AdminLandingComponent },
   { path: 'admin/upload', component: UploadComponent },
   { path: 'admin/:id/load-images', component: LoadImagesComponent },
-  { path: 'guest/load-images', component: GuestLoadImagesComponent },
+  { path: 'admin/add-to-slideshow', component: GuestLoadImagesComponent },
   { path: 'guest', component: GuestLandingComponent },
   { path: 'guest/view', component: ViewImagesComponent },
-  { path: 'guest/slideshow', component: SlideshowComponent },
+  { path: 'admin/slideshow', component: SlideshowComponent },
 ];
 
 @NgModule({

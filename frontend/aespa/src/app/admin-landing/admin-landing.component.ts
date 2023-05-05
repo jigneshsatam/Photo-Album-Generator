@@ -57,7 +57,7 @@ export class AdminLandingComponent {
 
   
   onSlideshow() {
-    this.router.navigate(['../guest/load-images']);
+    this.router.navigate(['../admin/add-to-slideshow']);
   }
 
   onLoadImages(album: any) {
