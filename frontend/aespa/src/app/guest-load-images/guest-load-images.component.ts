@@ -43,7 +43,7 @@ export class GuestLoadImagesComponent {
 
   searchFilter() {
     const numOfImgs = Number((<HTMLInputElement>document.getElementById("num-of-images")).value);
-    if (numOfImgs <= 0) {
+    if (isNaN(numOfImgs) || numOfImgs <= 0) {
       alert('Enter a Valid Number of Photos');
       return;
     }
