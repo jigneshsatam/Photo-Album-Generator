@@ -1,5 +1,5 @@
 <div class="p-3 mb-2 bg-light text-dark up-component">
-  <div class="container bg-faded select-dir">
+  <div class="container bg-faded select-dir" (click)="deselectFolder($event)">
     <div class="row justify-content-between align-items-center">
       <div class="col-md-7">
         <h1 class="text-end">Select Directory</h1>
@@ -18,23 +18,24 @@
       <div class="col-md-7 mx-auto">
         <button *ngIf="!showFileExplorer" (click)="toggleFileExplorer()"type="button" class="select-dir" class="btn btn-primary upload-button">Select directory</button>
         
-      <div *ngIf="showFileExplorer" class="file-explorer">
+      <div *ngIf="showFileExplorer" class="file-explorer" >
         <div class="explorer-header">
           <button class="btn button btn-secondary" (click)="back()">Back</button>
         <header class="current-url">{{ current_dir }}</header>
         <button *ngIf="showFileExplorer" (click)="toggleFileExplorer(); cancel()"type="button" class="btn btn-danger">X</button>
         </div>
-          <div class="directory-tree">
-            <div *ngIf="subDirectories" > 
-              <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder')" (dblclick)="onDoubleClick(folder, 'folder')">
-                <img class="folder" src="assets/folder.png" alt="folder icon" />
-                <span>{{ folder }}</span>
-              </div>
-            </div> <!-- subDirectories -->
-            <div *ngIf="!subDirectories" class="alert alert-info" role="alert">
-              <p>There are no subdirectories here. Hit "Select" to choose {{ current_dir }}</p>
-            </div> <!-- subDirectories -->
-          </div>
+        <div class="directory-tree">
+          <div *ngIf="subDirectories">
+            <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder', $event)" (dblclick)="onDoubleClick(folder, 'folder')">
+              <img class="folder" [ngClass]="{ 'filtered': selectedFolder === folder }" (click)="changeFilter(folder, 'folder', folder, $event)" src="assets/folder.png" alt="folder icon" />
+              <span>{{ folder }}</span>
+            </div>
+          </div> <!-- subDirectories -->
+          <div *ngIf="!subDirectories" class="alert alert-info" role="alert">
+            <p>There are no subdirectories here. Hit "Select" to choose {{ current_dir }}</p>
+          </div> <!-- subDirectories -->
+        </div> <!-- directory-tree -->
+        
 
         <div class="buttons">
           <button class="col-md-6 mx-auto select-button btn btn-success" (click)="select()">Select</button>

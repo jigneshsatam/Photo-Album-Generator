@@ -18,6 +18,24 @@ export class UploadComponent implements OnInit {
   base_dir = "/";
   current_dir = this.base_dir;
   subDirectories: boolean = true;
+  selectedFolder: string | null = '';
+
+  changeFilter(item: string, type: string, folder: string, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent the click event from propagating up to the parent element
+    this.selectedItem = { name: item, type };
+    this.selectedFolder = folder;
+  }
+  
+
+  
+  deselectFolder(event: MouseEvent): void {
+    // Check if the target element is not a folder
+    if (!(event.target as HTMLElement).classList.contains('folder')) {
+      this.selectedFolder = null;
+      this.selectedItem = null;
+    }
+  }
+  
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
 
@@ -68,6 +86,8 @@ export class UploadComponent implements OnInit {
       //console.log(response.path);
 
       // Update folders and files based on the response
+      this.selectedItem = null;
+      this.selectedFolder = null;
       this.folders = response.Directories;
       this.files = response.Files;
       if(folder != '/' && back == false){
@@ -88,19 +108,20 @@ export class UploadComponent implements OnInit {
   }
 
   // go to subdir
-  selectItem(item: string, type: string): void {
+  selectItem(item: string, type: string, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent the click event from propagating up to the parent element
     this.selectedItem = { name: item, type };
     console.log(`Selected item: ${this.selectedItem.name}, type: ${this.selectedItem.type}`);
   }
 
-  onDoubleClick(item: string, type: string): void {
-    //this.selectedItem = null;
+  onDoubleClick(item: string, type: string): void {    
     this.navigateTo(item, false);
   }
 
   back(): void {
     if (this.stackIsEmpty()) {
       console.log('Already at root');
+      alert('Already at root');
       return;
     }
     var elem = this.stack.pop();
