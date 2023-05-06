@@ -26,9 +26,11 @@
         </div>
         <div class="directory-tree">
           <div *ngIf="subDirectories">
-            <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder', $event)" (dblclick)="onDoubleClick(folder, 'folder')">
-              <img class="folder" [ngClass]="{ 'filtered': selectedFolder === folder }" (click)="changeFilter(folder, 'folder', folder, $event)" src="assets/folder.png" alt="folder icon" />
-              <span>{{ folder }}</span>
+            <div class="folders-container">
+              <div *ngFor="let folder of folders" class="folder-wrapper" (click)="selectItem(folder, 'folder', $event)" (dblclick)="onDoubleClick(folder, 'folder')">
+                <img class="folder" [ngClass]="{ 'filtered': selectedFolder === folder }" (click)="changeFilter(folder, 'folder', folder, $event)" src="assets/folder.png" alt="folder icon" />
+                <span>{{ folder }}</span>
+              </div> 
             </div>
           </div> <!-- subDirectories -->
           <div *ngIf="!subDirectories" class="alert alert-info" role="alert">

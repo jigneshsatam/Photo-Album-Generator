@@ -86,7 +86,9 @@ export class UploadComponent implements OnInit {
       //console.log(response.path);
 
       // Update folders and files based on the response
-      this.selectedItem = null;
+      var info = { name: folder, type: 'folder' };
+      this.selectedItem = info;
+      console.log("selected item: ", this.selectedItem);
       this.selectedFolder = null;
       this.folders = response.Directories;
       this.files = response.Files;
