@@ -1,5 +1,5 @@
 <div class="p-3 mb-2 bg-light text-dark up-component">
-  <div class="container bg-faded select-dir" (click)="deselectFolder($event)">
+  <div class="container bg-faded select-dir">
     <div class="row justify-content-between align-items-center">
       <div class="col-md-7">
         <h1 class="text-end">Select Directory</h1>
@@ -24,11 +24,13 @@
         <header class="current-url">{{ current_dir }}</header>
         <button *ngIf="showFileExplorer" (click)="toggleFileExplorer(); cancel()"type="button" class="btn btn-danger">X</button>
         </div>
-        <div class="directory-tree">
+        <div class="directory-tree" (click)="deselectFolder($event)">
           <div *ngIf="subDirectories">
-            <div *ngFor="let folder of folders" (click)="selectItem(folder, 'folder', $event)" (dblclick)="onDoubleClick(folder, 'folder')">
-              <img class="folder" [ngClass]="{ 'filtered': selectedFolder === folder }" (click)="changeFilter(folder, 'folder', folder, $event)" src="assets/folder.png" alt="folder icon" />
-              <span>{{ folder }}</span>
+            <div class="folders-container">
+              <div *ngFor="let folder of folders" class="folder-wrapper" (click)="selectItem(folder, 'folder', $event)" (dblclick)="onDoubleClick(folder, 'folder')">
+                <img class="folder" [ngClass]="{ 'filtered': selectedFolder === folder }" (click)="changeFilter(folder, 'folder', folder, $event)" src="assets/folder.png" alt="folder icon" />
+                <span>{{ folder }}</span>
+              </div> 
             </div>
           </div> <!-- subDirectories -->
           <div *ngIf="!subDirectories" class="alert alert-info" role="alert">
