@@ -1,1 +1,53 @@
-<p>login works!</p>
+<!-- importing folder icon from bootstrap -->
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+  <!-- adding grey background to entire page -->
+  <style>
+     .p-3.mb-2.bg-light.text-dark,
+     .container.bg-faded {
+     min-height: 100vh;
+     }
+  </style>
+</head>
+<!-- Tiles for album list list spread -->
+<body>
+  <div class="container">
+    <div class="row justify-content-center align-items-center vh-100">
+      <div class="col-md-6">
+        <div class="card p-4">
+          <div class="card-header">
+            <h3 class="mb-0">Login</h3>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="form-group mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="userName" [(ngModel)]="userName" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="pwd" [(ngModel)]="pwd" required>
+              </div>
+              <div class="form-check mb-4">
+                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" [(ngModel)]="rememberMe">
+                <label class="form-check-label" for="rememberMe">Remember me</label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mb-3" (click)="login()">Login</button>
+              <div *ngIf="errorMessage" class="alert alert-danger mb-3">
+                {{ errorMessage }}
+              </div>
+              <div class="mb-3">
+                <a routerLink="/forgot-password" class="link-primary">Forgot password?</a>
+              </div>
+            </form>
+            <div class="text-center">
+              <p class="mb-3">Not a user yet?</p>
+              <a routerLink="/register-admin" class="btn btn-outline-primary me-3">Admin Sign Up</a>
+              <!-- <a routerLink="/register-guest" class="btn btn-outline-primary">Guest Sign Up</a> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

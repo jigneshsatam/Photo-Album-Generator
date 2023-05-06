@@ -65,4 +65,10 @@ export class AdminLandingComponent {
     this.router.navigate([`/admin/${id}/load-images`]);
   }
 
+  signOut() {
+    // Navigate to the login page
+    this.router.navigate(['/login']);
+  }
+  
+
 }
