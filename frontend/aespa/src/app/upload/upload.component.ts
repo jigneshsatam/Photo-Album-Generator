@@ -122,6 +122,8 @@ export class UploadComponent implements OnInit {
 
   back(): void {
     if (this.stackIsEmpty()) {
+      var info = { name: '/', type: 'folder' };
+      this.selectedItem = info;
       console.log('Already at root');
       alert('Already at root');
       return;
