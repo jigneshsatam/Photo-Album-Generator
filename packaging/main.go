@@ -137,19 +137,19 @@ func startDockerWindows() {
 	output, err := exec.Command("docker", "version").Output()
 	if err != nil {
 		if strings.Contains(err.Error(), "executable file not found") {
-			cmd := exec.Command("cmd", "/K", "wsl --status")
-			output10, err10 := cmd.CombinedOutput()
-			if err10 != nil {
-				fmt.Println("====== Updating WSL ======")
-				output2, err2 := exec.Command("cmd", "/K", "wsl --install -d Ubuntu").Output()
-				if err2 != nil {
-					fmt.Println("Error in *** Updating WSL *** ")
-					fmt.Println("Error:: ==> ", err.Error())
-				}
-				fmt.Println("Output:: ==> ", string(output2))
-				fmt.Println("====== WSL Updated successfully ======")
+			// cmd := exec.Command("cmd", "/K", "wsl --status")
+			// output10, err10 := cmd.CombinedOutput()
+			// if err10 != nil {
+			// }
+			// fmt.Println("Output:: ==> ", string(output10))
+			fmt.Println("====== Updating WSL ======")
+			output2, err2 := exec.Command("cmd", "/K", "wsl --install -d Ubuntu").Output()
+			if err2 != nil {
+				fmt.Println("Error in *** Updating WSL *** ")
+				fmt.Println("Error:: ==> ", err.Error())
 			}
-			fmt.Println("Output:: ==> ", string(output10))
+			fmt.Println("Output:: ==> ", string(output2))
+			fmt.Println("====== WSL Updated successfully ======")
 
 			fmt.Println("====== Docker Installation Started ======")
 
@@ -244,7 +244,7 @@ func startApplicationWindows() {
 	fmt.Println("Starting Application on Windows...")
 	createDockerComposeYAML()
 	runBashCommandWindows("docker compose up -d --scale backend=3")
-	time.Sleep(3 * time.Second)
+	time.Sleep(30 * time.Second)
 	runBashCommandWindows("start http://localhost:4200")
 }
 
