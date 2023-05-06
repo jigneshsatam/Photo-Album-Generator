@@ -49,6 +49,10 @@ export class UploadComponent implements OnInit {
       console.log(response);
       this.folders = response.Directories;
       this.files = response.Files;
+      console.log("Folders: ", this.folders);
+      if(this.folders.length == 0){
+        this.subDirectories = false;
+      }
     });
   }
 
