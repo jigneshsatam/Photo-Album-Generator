@@ -6,6 +6,8 @@ import (
 	"bufio"
 	_ "embed"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -24,7 +26,7 @@ var linuxDocker string
 //go:embed mac-docker.sh
 var macDocker string
 
-//go:embed windows-docker.sh
+//go:embed windows-docker.bat
 var windowsDocker string
 
 //go:embed create-tables.sql
@@ -33,6 +35,9 @@ var schema string
 //go:embed docker-compose-dev.yml
 var dockerCompse string
 
+// var stop = "docker compose down -v --rmi all"
+var stop = "docker compose down"
+
 func main() {
 	createUtilsDir()
 	createSchema()
@@ -40,8 +45,9 @@ func main() {
 	case "windows":
 		defer shutdownDockerWindows()
 		fmt.Println("Hello from Windows -", runtime.GOARCH)
-		runBashCommand(windowsDocker)
+		// runBashCommand(windowsDocker)
 		startDockerWindows()
+		startApplicationWindows()
 	case "linux":
 		defer shutdownDocker()
 		fmt.Println("Hello from Linux -", runtime.GOARCH)
@@ -96,28 +102,159 @@ func startDocker() {
 
 	// runBashCommand("echo " + dockerCompse + " > docker-compose.yml")
 	runBashCommand("docker compose up -d --scale backend=3")
-	time.Sleep(10 * time.Second)
+	time.Sleep(30 * time.Second)
 	runBashCommand("open http://localhost:4200")
 }
 
 func startDockerWindows() {
+	// downloadDocker := "curl.exe --output 'Docker Desktop Installer.exe' --url https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
+	// runBashCommandWindowsWithoutCMD(downloadDocker)
+	// fmt.Println("Installing docker...")
+	// installingDocker := `start /w \"\" \"Docker Desktop Installer.exe\" install`
+	// runBashCommandWindowsWithoutCMD(installingDocker)
+	// fmt.Println("Starting docker...")
+	// stratDocker := "start /B \"\" \"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\""
+	// batFile := "windows-docker.bat"
+
+	// ===== Working code ====
+	// downloadDockerExe()
+	// err = os.WriteFile("windows-docker.bat", []byte(windowsDocker), 0644)
+	// if err != nil {
+	// 	fmt.Println("Error: ", err)
+	// }
+	// runBashCommandWindows(`start /w windows-docker.bat`)
+	// runBashCommandWindows("del windows-docker.bat")
+	// ===== Working code ====
+
+	// downloadDockerExe()
+	// err := exec.Command("cmd", "/K", "start", "/w", "''", "'Docker Desktop Installer.exe' install").Run()
+	// if err != nil {
+	// 	fmt.Println("Error in *** Docker Installing *** ", err)
+	// }
+
+	// Check if Docker is installed
+	fmt.Println("====== Docker on Windows ======")
+	output, err := exec.Command("docker", "version").Output()
+	if err != nil {
+		if strings.Contains(err.Error(), "executable file not found") {
+			cmd := exec.Command("cmd", "/K", "wsl --status")
+			output10, err10 := cmd.CombinedOutput()
+			if err10 != nil {
+				fmt.Println("====== Updating WSL ======")
+				output2, err2 := exec.Command("cmd", "/K", "wsl --install -d Ubuntu").Output()
+				if err2 != nil {
+					fmt.Println("Error in *** Updating WSL *** ")
+					fmt.Println("Error:: ==> ", err.Error())
+				}
+				fmt.Println("Output:: ==> ", string(output2))
+				fmt.Println("====== WSL Updated successfully ======")
+			}
+			fmt.Println("Output:: ==> ", string(output10))
+
+			fmt.Println("====== Docker Installation Started ======")
+
+			fmt.Println("Docker is not installed on this machine.")
+			fmt.Println("====== Downloading Docker ======")
+			downloadDockerExe()
+			fmt.Println("====== Docker Download Completed ======")
+			fmt.Println("====== Installing Docker ======")
+
+			output, err = exec.Command("cmd.exe", "/K", "start /w Docker-Desktop-Installer.exe install").Output()
+			if err != nil {
+				fmt.Println("Error in *** Docker Installing *** ")
+				fmt.Println("Error:: ==> ", err.Error())
+			}
+			fmt.Println("Output:: ==> ", string(output))
+			fmt.Println("====== Docker Installation Completed ======")
+		} else {
+			fmt.Println("Docker is installed on this machine. Might not running.")
+			fmt.Println("Check if Docker is installed Error")
+			fmt.Println("Error in *** Docker Checking *** ")
+			fmt.Println("Error:: ==> ", err.Error())
+		}
+	}
+
+	output, err = exec.Command("docker", "ps").Output()
+	if err != nil {
+		fmt.Println("====== Starting Docker on Windows ======")
+
+		err = os.WriteFile("windows-docker.bat", []byte(windowsDocker), 0644)
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+		// cmd := exec.Command("cmd", "/c", "start /wait /b cmd /c windows-docker.bat")
+		// cmd := exec.Command("cmd", "/K", "start /wait /b cmd /c windows-docker.bat")
+
+		// cmd := exec.Command("cmd", "/K", "start /wait /b cmd /c windows-docker.bat")
+
+		// fmt.Println("windowsDocker ==> ", windowsDocker)
+		// cmd := exec.Command("cmd", "/K", windowsDocker)
+
+		// cmd := exec.Command("cmd", "/K", `start /b C:\Program Files\Docker\Docker\Docker Desktop.exe`)
+		ch := make(chan bool)
+		go func(chan bool) {
+			fmt.Println("In the goroutine.....")
+			cmd := exec.Command("cmd", "/k", `C:\Program Files\Docker\Docker\Docker Desktop.exe`)
+			op, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Println("Goroutine Error:: ", err)
+			}
+			fmt.Println("Goroutine Output:: ", string(op))
+			time.Sleep(20 * time.Second)
+			ch <- true
+		}(ch)
+
+		for {
+			fmt.Println("In the for loop...")
+			output30, err30 := exec.Command("docker", "ps").Output()
+			if err30 == nil {
+				fmt.Println("For loop Output:: ", string(output30))
+				break
+			}
+			fmt.Println("For loop Error:: ", err30)
+			time.Sleep(2 * time.Second)
+		}
+		// <-ch
+		// runBashCommandWindows(`start windows-docker.bat`)
+		runBashCommandWindows("del windows-docker.bat")
+
+		// // start := `start /B "" "C:\Program Files\Docker\Docker\Docker Desktop.exe`
+		// // cmd := exec.Command("cmd", "/K", "start /B dockerd")
+		// // cmd := exec.Command("cmd", "/c", "start", "/B", `""`, `"%ProgramFiles%\Docker\Docker\Docker Desktop.exe"`)
+		// // cmd := exec.Command("cmd", "/c", "start", "/B", `""`, `"C:\Program Files\Docker\Docker\Docker Desktop.exe"`)
+		// // cmd := exec.Command("C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe")
+		// // cmd := exec.Command("cmd", "/K", "start", "/B", "/wait", "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe")
+		// // cmd := exec.Command("cmd", "/c", "start", "Docker Desktop")
+		// cmd := exec.Command("cmd", "/K", "start", "\"\"", "/B", "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe")
+		// err := cmd.Run()
+		// output, err = cmd.CombinedOutput()
+		// if err != nil {
+		// 	fmt.Println("Error in *** Starting Docker *** ", err)
+		// }
+		// fmt.Println("Output:: ==> ", string(output))
+		fmt.Println("====== Docker Started ======")
+	} else {
+		fmt.Println("Output:: ==> ", string(output))
+		fmt.Println("====== Docker is Already Running ======")
+	}
+}
+
+func startApplicationWindows() {
 	fmt.Println("Starting Application on Windows...")
 	createDockerComposeYAML()
 	runBashCommandWindows("docker compose up -d --scale backend=3")
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 	runBashCommandWindows("start http://localhost:4200")
 }
 
 func shutdownDocker() {
-	stop := "docker compose down -v"
 	runBashCommand(stop)
 	runBashCommand("rm docker-compose.yml")
 }
 
 func shutdownDockerWindows() {
-	stop := "docker compose down -v"
 	runBashCommandWindows(stop)
-	runBashCommandWindows("rm docker-compose.yml")
+	runBashCommandWindows("del docker-compose.yml")
 }
 
 func createDockerComposeYAML() {
@@ -234,4 +371,45 @@ func runBashCommandWindows(comm string) {
 	// 	fmt.Println(m)
 	// }
 	// cmd.Wait()
+}
+
+func runBashCommandWindowsWithoutCMD(comm string) {
+	cmd := exec.Command(comm)
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+	fmt.Println("output: ", string(out))
+
+	// cmd := exec.Command("bash")
+	// // cmd.Stdin = strings.NewReader(command)
+	// stdout, _ := cmd.StdoutPipe()
+	// cmd.Start()
+	// scanner := bufio.NewScanner(stdout)
+	// // scanner.Split(bufio.ScanWords)
+	// for scanner.Scan() {
+	// 	m := scanner.Text()
+	// 	fmt.Println(m)
+	// }
+	// cmd.Wait()
+}
+
+func downloadDockerExe() {
+	out, err := os.Create("Docker-Desktop-Installer.exe")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer out.Close()
+
+	resp, err := http.Get("https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe")
+	// https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
