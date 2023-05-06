@@ -14,9 +14,15 @@ Web application that takes your photos, allows for the creation of custom user t
 - [Project Management](#Project-Management)
   * [Project Board](#Project-Board)
 
-## Installation
-Install Docker for your local machine from here ==> [Docker](https://www.docker.com)
+## User Installation Guide
 [User Installation Guide](https://farishah.github.io/Photo-Album-Generator/Installation_Guide.pdf)
+
+## Developer Installation Guide:
+1. Clone the Main branch of this repository.
+2. Next, install Docker on your local machine from here ==> [Docker](https://www.docker.com)
+3. Make sure the Docker Application is open on your computer.
+4. Open the cloned project onto your preferred choice of IDE (VS Code is recommended).
+5. Now that your IDE contains the project, navigate to the IDE terminal and build the docker using the commands below.
 
 ## Run
 
