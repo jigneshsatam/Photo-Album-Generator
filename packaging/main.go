@@ -165,6 +165,7 @@ func startDockerWindows() {
 				fmt.Println("Error:: ==> ", err.Error())
 			}
 			fmt.Println("Output:: ==> ", string(output))
+			runBashCommandWindows("del Docker-Desktop-Installer.exe")
 			fmt.Println("====== Docker Installation Completed ======")
 		} else {
 			fmt.Println("Docker is installed on this machine. Might not running.")
@@ -194,7 +195,7 @@ func startDockerWindows() {
 		ch := make(chan bool)
 		go func(chan bool) {
 			fmt.Println("In the goroutine.....")
-			cmd := exec.Command("cmd", "/k", `C:\Program Files\Docker\Docker\Docker Desktop.exe`)
+			cmd := exec.Command("cmd", "/c", `C:\Program Files\Docker\Docker\Docker Desktop.exe`)
 			op, err := cmd.CombinedOutput()
 			if err != nil {
 				fmt.Println("Goroutine Error:: ", err)
