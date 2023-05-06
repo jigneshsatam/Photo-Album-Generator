@@ -16,6 +16,7 @@ Web application that takes your photos, allows for the creation of custom user t
 
 ## Installation
 Install Docker for your local machine from here ==> [Docker](https://www.docker.com)
+[User Installation Guide](https://farishah.github.io/Photo-Album-Generator/Installation_Guide.pdf)
 
 ## Run
 
