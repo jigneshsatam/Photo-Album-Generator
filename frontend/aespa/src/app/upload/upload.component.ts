@@ -49,6 +49,10 @@ export class UploadComponent implements OnInit {
       console.log(response);
       this.folders = response.Directories;
       this.files = response.Files;
+      console.log("Folders: ", this.folders);
+      if(this.folders.length == 0){
+        this.subDirectories = false;
+      }
     });
   }
 
@@ -145,15 +149,45 @@ export class UploadComponent implements OnInit {
   // FINAL SELECT
   select(): void {
     if (!this.selectedItem) {
-      alert('No item selected');
-      console.log('No item selected');
-      return;
+
+      if(this.current_dir == '/') {
+        console.log('base dir selected');
+        var info = { name: "/", type: "folder"};
+        this.selectedItem = info;
+      }
+      else {
+        alert('No item selected');
+        console.log('No item selected');
+        return;
+      }
     }
 
+    // "Did you ever hear the tragedy of Darth Plagueis the Wise?" 
+    // no? well, it's not a story the jedi would tell you
+    // it's a sith legend
+    // Darth Plagueis was a dark lord of the sith
+    // so powerful and so wise, he could use the force to influence the midichlorians to create life
+    // he had such a knowledge of the dark side, he could even keep the ones he cared about from dying
+    // the dark side of the force is a pathway to many abilities some consider to be unnatural
+    // he became so powerful, the only thing he was afraid of was losing his power
+    // which, eventually of course, he did
+    // unfortunately, he taught his apprentice everything he knew
+    // then his apprentice killed him in his sleep
+    // ironic, he could save others from death, but not himself
+    // is it possible to learn this power?
+    // not from a jedi
+    // - Darth Sidious
+    
+    if(this.current_dir == '/') {
+      var dirpath = this.selectedItem.name;
+    }
+    else {
+      var dirpath = this.selectedItem.name + '/';
+    }
     var data = this.selectedItem.name;
     var post_url = 'http://localhost:8827/images/AddNewDirectory';
     var json = {
-      "dirPath": this.selectedItem.name + '/',
+      "dirPath": dirpath,
       "userId": 1
     }
 
