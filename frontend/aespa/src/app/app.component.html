@@ -1,2 +1,11 @@
-<app-header></app-header>
-<router-outlet></router-outlet>
+<!-- Add the (click) event to the home button -->
+<!-- Add the navigateHome() method to the component -->
+<app-header>
+    <button id="homeButton" (click)="navigateHome()">Home</button>
+    <button id="signOutButton" (click)="signOut()">Sign Out</button>
+  </app-header>
+  <router-outlet></router-outlet>
+  
+     
+
+

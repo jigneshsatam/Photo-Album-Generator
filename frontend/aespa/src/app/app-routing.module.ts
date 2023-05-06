@@ -10,19 +10,22 @@ import { SlideshowComponent } from './slideshow/slideshow.component';
 import { AdminLandingComponent } from './admin-landing/admin-landing.component';
 import { GuestLandingComponent } from './guest-landing/guest-landing.component';
 import { UploadComponent } from './upload/upload.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
-  { path: '', component: AdminLandingComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'register-admin', component: AdminRegisterComponent },
   { path: 'register-guest', component: GuestRegisterComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'admin', component: AdminLandingComponent },
-  { path: 'admin/upload', component: UploadComponent },
-  { path: 'admin/:id/load-images', component: LoadImagesComponent },
-  { path: 'admin/add-to-slideshow', component: GuestLoadImagesComponent },
+  { path: 'admin', component: AdminLandingComponent, canActivate: [AuthGuard] },
+  { path: 'admin/upload', component: UploadComponent, canActivate: [AuthGuard] },
+  { path: 'admin/:id/load-images', component: LoadImagesComponent, canActivate: [AuthGuard] },
+  { path: 'admin/add-to-slideshow', component: GuestLoadImagesComponent, canActivate: [AuthGuard] },
   { path: 'guest', component: GuestLandingComponent },
   { path: 'guest/view', component: ViewImagesComponent },
-  { path: 'admin/slideshow', component: SlideshowComponent },
+  { path: 'admin/slideshow', component: SlideshowComponent, canActivate: [AuthGuard] },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -30,3 +33,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

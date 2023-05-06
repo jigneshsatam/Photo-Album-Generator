@@ -21,10 +21,10 @@
       </div>
       <div class="col-md-5 d-flex justify-content-end">
         <button type="button" class="btn btn-success" (click)="onNewDirectory()">Add New Directory</button>
-      <button type="button" class="btn btn-dark ms-3" (click)="onSlideshow()">Slideshow</button>
-  </div>
-  
-  </div>
+        <button type="button" class="btn btn-dark ms-3" (click)="onSlideshow()">Slideshow</button>
+        <button type="button" class="btn btn-outline-danger ms-3" (click)="signOut()">Sign Out</button> <!-- Added sign out button -->
+      </div>
+    </div>
     <div class="row">
     </div>
     <!-- When atleast 1 album exists in DB -->
@@ -47,7 +47,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Message when no album exists -->
     <div class="row" *ngIf="!isLoading && albums.length == 0">
       <h5 style="text-align: center; margin-top:40px;">You have no albums!</h5>

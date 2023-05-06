@@ -56,6 +56,6 @@ def register_user():
     else:
         return jsonify({'status': 'User creation failed for ' + last_name + ', ' + first_name}), 500
 
-@users_routes.route("/login")
-def login():
-  pass
+# @users_routes.route("/login")
+# def login():
+#   pass

@@ -46,31 +46,31 @@ services:
     links:
       - database:database
 
-  frontend:
-    # image: jigneshsatam/frontend:latest
-    build: frontend
-    volumes:
-      - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
-      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
-    ports:
-      - "4200:80"
-    networks:
-      - photo_album_generator_nw
+  # frontend:
+  #   # image: jigneshsatam/frontend:latest
+  #   build: frontend
+  #   volumes:
+  #     - ./Photo-Generator-Pictures:/usr/share/nginx/html/assets/uploads/
+  #     - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+  #   ports:
+  #     - "4200:80"
+  #   networks:
+  #     - photo_album_generator_nw
 
-  frontend-dev:
-    # image: jigneshsatam/frontend-dev:latest
-    build:
-      context: frontend
-      dockerfile: Dockerfile-dev
-    volumes:
-      - ./frontend/aespa/src:/app/src
-      - ./Photo-Generator-Pictures:/app/src/assets/uploads/
-      # - /app/node_modules
-    ports:
-      - "4300:4200"
-    networks:
-      - photo_album_generator_nw
-    command: npm start
+  # frontend-dev:
+  #   # image: jigneshsatam/frontend-dev:latest
+  #   build:
+  #     context: frontend
+  #     dockerfile: Dockerfile-dev
+  #   volumes:
+  #     - ./frontend/aespa/src:/app/src
+  #     - ./Photo-Generator-Pictures:/app/src/assets/uploads/
+  #     # - /app/node_modules
+  #   ports:
+  #     - "4300:4200"
+  #   networks:
+  #     - photo_album_generator_nw
+  #   command: npm start
 
   cache:
     image: "redis:alpine"

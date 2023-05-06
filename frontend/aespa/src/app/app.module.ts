@@ -19,6 +19,7 @@ import { TaggingComponent } from './tagging/tagging.component';
 import { UploadComponent } from './upload/upload.component';
 
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     GuestLandingComponent,
     TaggingComponent,
     UploadComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     BrowserModule,
