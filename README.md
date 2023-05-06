@@ -27,7 +27,7 @@ docker compose up -d --scale backend=3
 ## Verify Build
 
 ### Hello Page
-In the browser visit http://localhost:8827
+In the browser visit http://localhost:4200
 
 ## Terminate Docker
 
